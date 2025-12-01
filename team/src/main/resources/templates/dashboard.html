@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Conector Semántico</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CSS personalizado -->
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-header .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid white;
+        }
+
+        .sidebar-menu a i {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        .search-box input {
+            border-radius: 50px;
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+
+        .stats-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .stats-card.primary .icon {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stats-card.success .icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .stats-card.warning .icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stats-card.danger .icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .stats-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stats-card p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .stats-card .change {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .stats-card .change.positive {
+            color: var(--success-color);
+        }
+
+        .stats-card .change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Chart Card */
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .chart-card h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+
+        /* Recent Activity */
+        .activity-item {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .activity-item .time {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* Quick Actions */
+        .quick-action-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .search-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-link"></i>
+            </div>
+            <h3>Conector Semántico</h3>
+            <small>OneCard</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" class="active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-box"></i>
+                <span>Productos</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-tags"></i>
+                <span>Categorías</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-receipt"></i>
+                <span>Tickets</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-bullhorn"></i>
+                <span>Campañas</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-light w-100">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h5 class="mb-0 ms-3">Dashboard</h5>
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="form-control" placeholder="Buscar productos, categorías, clientes...">
+            </div>
+
+            <div class="user-menu">
+                <div class="dropdown">
+                    <button class="btn btn-link" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="badge bg-danger position-absolute">3</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Nueva venta registrada</a></li>
+                        <li><a class="dropdown-item" href="#">Stock bajo en Agua Bonafont</a></li>
+                        <li><a class="dropdown-item" href="#">Nueva campaña creada</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                        <div class="user-avatar" sec:authentication="name">
+                            U
+                        </div>
+                        <div class="text-start d-none d-md-block">
+                            <small class="text-muted d-block">Bienvenido</small>
+                            <strong sec:authentication="name">Usuario</strong>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Bienvenido de vuelta! Aquí está el resumen de tu negocio hoy.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card primary">
+                        <div class="icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3>245</h3>
+                        <p>Ventas del Día</p>
+                        <div class="change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5% vs ayer
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stats-card success">
+                        <div class="icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>$18,450</h3>
+                        <p>Ingresos del Día</p>
+                        <div class="change positive">
+                            <i class="fas fa-arrow-up"></i> +8.2% vs ayer
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stats-card warning">
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>1,248</h3>
+                        <p>Clientes Activos</p>
+                        <div class="change positive">
+                            <i class="fas fa-arrow-up"></i> +5.1% este mes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="stats-card danger">
+                        <div class="icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h3>847</h3>
+                        <p>Productos en Stock</p>
+                        <div class="change negative">
+                            <i class="fas fa-exclamation-triangle"></i> 12 por agotar
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-8">
+                    <div class="chart-card">
+                        <h4><i class="fas fa-chart-line"></i> Ventas de los Últimos 7 Días</h4>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <h4><i class="fas fa-chart-pie"></i> Productos Más Vendidos</h4>
+                        <canvas id="productsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Quick Actions -->
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="chart-card">
+                        <h4><i class="fas fa-clock"></i> Actividad Reciente</h4>
+                        <div class="activity-item">
+                            <strong>Nueva venta registrada</strong>
+                            <p class="mb-0">Ticket #2024-001245 - $85.50</p>
+                            <span class="time">Hace 5 minutos</span>
+                        </div>
+                        <div class="activity-item">
+                            <strong>Stock actualizado</strong>
+                            <p class="mb-0">Agua Bonafont 1L - 50 unidades agregadas</p>
+                            <span class="time">Hace 15 minutos</span>
+                        </div>
+                        <div class="activity-item">
+                            <strong>Nueva categoría creada</strong>
+                            <p class="mb-0">Categoría: Bebidas Energéticas</p>
+                            <span class="time">Hace 1 hora</span>
+                        </div>
+                        <div class="activity-item">
+                            <strong>Campaña enviada</strong>
+                            <p class="mb-0">Promoción "Agua 2x1" - 450 clientes</p>
+                            <span class="time">Hace 2 horas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card">
+                        <h4><i class="fas fa-bolt"></i> Acciones Rápidas</h4>
+                        <button class="quick-action-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            <div>
+                                <strong>Nueva Venta</strong>
+                                <small class="d-block text-muted">Registrar ticket</small>
+                            </div>
+                        </button>
+                        <button class="quick-action-btn">
+                            <i class="fas fa-box-open"></i>
+                            <div>
+                                <strong>Agregar Producto</strong>
+                                <small class="d-block text-muted">Nuevo item</small>
+                            </div>
+                        </button>
+                        <button class="quick-action-btn">
+                            <i class="fas fa-search"></i>
+                            <div>
+                                <strong>Búsqueda Semántica</strong>
+                                <small class="d-block text-muted">Buscar productos</small>
+                            </div>
+                        </button>
+                        <button class="quick-action-btn">
+                            <i class="fas fa-bullhorn"></i>
+                            <div>
+                                <strong>Nueva Campaña</strong>
+                                <small class="d-block text-muted">Marketing dirigido</small>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Ventas ($)',
+                    data: [12500, 15800, 14200, 16900, 18450, 19200, 18450],
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Products Chart
+        const productsCtx = document.getElementById('productsChart').getContext('2d');
+        new Chart(productsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Agua', 'Refrescos', 'Botanas', 'Lácteos', 'Otros'],
+                datasets: [{
+                    data: [35, 25, 20, 15, 5],
+                    backgroundColor: [
+                        '#2563eb',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Sidebar Toggle for Mobile
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
