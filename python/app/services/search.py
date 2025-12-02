@@ -5,21 +5,49 @@ from datetime import datetime
 
 from services.embeddings import generate_embeddings, cosine_similarity
 from utils.text_cleaner import normalize_text
-from utils.data_loader import load_texts_from_csv
+from utils.data_loader import load_texts_from_csv, load_texts_with_categories_from_csv
 from typing import List, Tuple, Dict, Any
 from numpy.typing import NDArray
 
 CATEGORIES = ["agua", "botana", "lácteos", "bebidas energéticas", "electrónica", "hogar"]
 CATEGORY_EMBS = generate_embeddings(CATEGORIES)
 
-# Función para obtener textos (items)
-def load_texts() -> List[str]:
-    texts1 = load_texts_from_csv("data/convertcsv.csv", "full_description")
-    texts2 = load_texts_from_csv("data/DetalleFacturas.csv", "vcDescripcion")
+# Función para obtener textos (items) con categorías
+def load_texts() -> Tuple[List[str], List[str]]:
+    """
+    Carga textos de productos desde CSVs con sus categorías.
+    Retorna tupla (textos_con_categoria, categorias)
+    """
+    # Cargar desde CSV 1 con categorías
+    data1 = load_texts_with_categories_from_csv("data/convertcsv.csv", "full_description", "type")
 
-    raw_texts = list(set(texts1) ^ set(texts2))
+    # Cargar desde CSV 2 limpio (ahora tiene columna 'type')
+    data2 = load_texts_with_categories_from_csv("data/DetalleFacturas_clean.csv", "vcDescripcion", "type")
 
-    return [normalize_text(t) for t in raw_texts]
+    # Combinar y eliminar duplicados
+    all_data = data1 + data2
+
+    # Usar dict para eliminar duplicados por nombre manteniendo categoría
+    unique_data = {}
+    for text, category in all_data:
+        if text not in unique_data:
+            unique_data[text] = category
+
+    # Preparar textos enriquecidos con categoría
+    enriched_texts = []
+    categories = []
+
+    for text, category in unique_data.items():
+        # Combinar nombre + categoría para mejor embedding
+        if category:
+            enriched_text = f"{text} {category}"
+        else:
+            enriched_text = text
+
+        enriched_texts.append(normalize_text(enriched_text))
+        categories.append(category)
+
+    return enriched_texts, categories
 
 # Función para generar embeddings según load_texts()
 def generate_all_embeddings(texts: List[str]) -> Tuple[NDArray[np.float32], List[str]]:

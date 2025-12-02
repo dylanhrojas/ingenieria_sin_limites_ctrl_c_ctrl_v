@@ -48,14 +48,20 @@ async def lifespan(app: FastAPI):
         # Si no hay embeddings guardados, cargar desde CSV
         print(result["message"])
         print("Cargando textos desde CSV...")
-        TEXTS = load_texts()
-        
+        TEXTS, loaded_categories = load_texts()
+
         print("Generando embeddings iniciales...")
         EMBEDDINGS, _ = generate_all_embeddings(TEXTS)
-        
+
         # Generar IDs temporales (1, 2, 3, ...)
         IDS = list(range(1, len(TEXTS) + 1))
-        
+
+        # Actualizar categorías dinámicas si existen
+        if loaded_categories:
+            DYNAMIC_CATEGORIES = list(set([c for c in loaded_categories if c]))
+            if DYNAMIC_CATEGORIES:
+                DYNAMIC_CATEGORY_EMBS = generate_embeddings(DYNAMIC_CATEGORIES)
+
         # Guardar embeddings generados
         print("Guardando embeddings...")
         save_result = save_embeddings(
@@ -63,7 +69,7 @@ async def lifespan(app: FastAPI):
             metadata={
                 "ids": IDS,
                 "texts": TEXTS,
-                "categories": []
+                "categories": loaded_categories
             },
             filepath=DATA_PATH
         )
