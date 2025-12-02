@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Conector Semántico</title>
+    <title>Dashboard - Sistema de Viáticos</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,10 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
-    <!-- Chart.js para gráficos -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- CSS personalizado -->
     <style>
         :root {
             --primary-color: #2563eb;
@@ -233,10 +232,6 @@
             color: var(--success-color);
         }
 
-        .stats-card .change.negative {
-            color: var(--danger-color);
-        }
-
         /* Chart Card */
         .chart-card {
             background: white;
@@ -253,7 +248,7 @@
             margin-bottom: 20px;
         }
 
-        /* Recent Activity */
+        /* Activity */
         .activity-item {
             padding: 15px;
             border-left: 3px solid var(--primary-color);
@@ -279,6 +274,8 @@
             gap: 15px;
             transition: all 0.3s ease;
             margin-bottom: 15px;
+            text-decoration: none;
+            color: inherit;
         }
 
         .quick-action-btn:hover {
@@ -305,10 +302,6 @@
             .main-content {
                 margin-left: 0;
             }
-
-            .search-box {
-                display: none;
-            }
         }
     </style>
 </head>
@@ -317,18 +310,18 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <i class="fas fa-link"></i>
+                <i class="fas fa-receipt"></i>
             </div>
-            <h3>Conector Semántico</h3>
+            <h3>Sistema de Viáticos</h3>
             <small>OneCard</small>
         </div>
 
         <div class="sidebar-menu">
-            <a href="#" class="active">
+            <a th:href="@{/dashboard}" class="active">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#">
+            <a th:href="@{/productos}">
                 <i class="fas fa-box"></i>
                 <span>Productos</span>
             </a>
@@ -338,15 +331,11 @@
             </a>
             <a href="#">
                 <i class="fas fa-receipt"></i>
-                <span>Tickets</span>
+                <span>Viáticos</span>
             </a>
             <a href="#">
                 <i class="fas fa-users"></i>
-                <span>Clientes</span>
-            </a>
-            <a href="#">
-                <i class="fas fa-bullhorn"></i>
-                <span>Campañas</span>
+                <span>Usuarios</span>
             </a>
             <a href="#">
                 <i class="fas fa-chart-line"></i>
@@ -378,27 +367,15 @@
                 <h5 class="mb-0 ms-3">Dashboard</h5>
             </div>
 
-            <div class="search-box">
-                <input type="text" class="form-control" placeholder="Buscar productos, categorías, clientes...">
+            <div class="search-box d-none d-md-block">
+                <input type="text" class="form-control" placeholder="Buscar productos...">
             </div>
 
             <div class="user-menu">
                 <div class="dropdown">
-                    <button class="btn btn-link" data-bs-toggle="dropdown">
-                        <i class="fas fa-bell fa-lg"></i>
-                        <span class="badge bg-danger position-absolute">3</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Nueva venta registrada</a></li>
-                        <li><a class="dropdown-item" href="#">Stock bajo en Agua Bonafont</a></li>
-                        <li><a class="dropdown-item" href="#">Nueva campaña creada</a></li>
-                    </ul>
-                </div>
-
-                <div class="dropdown">
                     <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-                        <div class="user-avatar" sec:authentication="name">
-                            U
+                        <div class="user-avatar">
+                            <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                         </div>
                         <div class="text-start d-none d-md-block">
                             <small class="text-muted d-block">Bienvenido</small>
@@ -407,7 +384,6 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post">
@@ -426,7 +402,7 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h1 class="page-title">Dashboard</h1>
-                <p class="page-subtitle">Bienvenido de vuelta! Aquí está el resumen de tu negocio hoy.</p>
+                <p class="page-subtitle">Sistema de Gestión de Viáticos y Productos</p>
             </div>
 
             <!-- Stats Cards -->
@@ -434,25 +410,24 @@
                 <div class="col-md-3">
                     <div class="stats-card primary">
                         <div class="icon">
-                            <i class="fas fa-shopping-cart"></i>
+                            <i class="fas fa-box"></i>
                         </div>
-                        <h3>245</h3>
-                        <p>Ventas del Día</p>
+                        <h3>125</h3>
+                        <p>Productos Registrados</p>
                         <div class="change positive">
-                            <i class="fas fa-arrow-up"></i> +12.5% vs ayer
+                            <i class="fas fa-arrow-up"></i> +15 esta semana
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-3">
                     <div class="stats-card success">
-                        <div class="icon">
-                            <i class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-tags"></i>
                         </div>
-                        <h3>$18,450</h3>
-                        <p>Ingresos del Día</p>
+                        <h3>28</h3>
+                        <p>Categorías Activas</p>
                         <div class="change positive">
-                            <i class="fas fa-arrow-up"></i> +8.2% vs ayer
+                            <i class="fas fa-check"></i> Listo para clasificar
                         </div>
                     </div>
                 </div>
@@ -460,12 +435,12 @@
                 <div class="col-md-3">
                     <div class="stats-card warning">
                         <div class="icon">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-receipt"></i>
                         </div>
-                        <h3>1,248</h3>
-                        <p>Clientes Activos</p>
-                        <div class="change positive">
-                            <i class="fas fa-arrow-up"></i> +5.1% este mes
+                        <h3>45</h3>
+                        <p>Viáticos Pendientes</p>
+                        <div class="change">
+                            <i class="fas fa-clock"></i> Requieren revisión
                         </div>
                     </div>
                 </div>
@@ -473,93 +448,89 @@
                 <div class="col-md-3">
                     <div class="stats-card danger">
                         <div class="icon">
-                            <i class="fas fa-box"></i>
+                            <i class="fas fa-users"></i>
                         </div>
-                        <h3>847</h3>
-                        <p>Productos en Stock</p>
-                        <div class="change negative">
-                            <i class="fas fa-exclamation-triangle"></i> 12 por agotar
+                        <h3>12</h3>
+                        <p>Usuarios Activos</p>
+                        <div class="change positive">
+                            <i class="fas fa-user-plus"></i> 2 nuevos
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-8">
-                    <div class="chart-card">
-                        <h4><i class="fas fa-chart-line"></i> Ventas de los Últimos 7 Días</h4>
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-
+            <!-- Quick Actions -->
+            <div class="row g-4">
                 <div class="col-md-4">
                     <div class="chart-card">
-                        <h4><i class="fas fa-chart-pie"></i> Productos Más Vendidos</h4>
-                        <canvas id="productsChart"></canvas>
+                        <h4><i class="fas fa-bolt"></i> Acciones Rápidas</h4>
+                        <a th:href="@{/productos/nuevo}" class="quick-action-btn">
+                            <i class="fas fa-box-open"></i>
+                            <div>
+                                <strong>Agregar Producto</strong>
+                                <small class="d-block text-muted">Nuevo producto para clasificación</small>
+                            </div>
+                        </a>
+                        <a th:href="@{/productos}" class="quick-action-btn">
+                            <i class="fas fa-search"></i>
+                            <div>
+                                <strong>Ver Productos</strong>
+                                <small class="d-block text-muted">Consultar catálogo</small>
+                            </div>
+                        </a>
+                        <a href="#" class="quick-action-btn">
+                            <i class="fas fa-receipt"></i>
+                            <div>
+                                <strong>Subir Viático</strong>
+                                <small class="d-block text-muted">Nuevo ticket de gasto</small>
+                            </div>
+                        </a>
+                        <a href="#" class="quick-action-btn">
+                            <i class="fas fa-chart-line"></i>
+                            <div>
+                                <strong>Ver Reportes</strong>
+                                <small class="d-block text-muted">Análisis de gastos</small>
+                            </div>
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            <!-- Recent Activity & Quick Actions -->
-            <div class="row g-4">
                 <div class="col-md-8">
                     <div class="chart-card">
                         <h4><i class="fas fa-clock"></i> Actividad Reciente</h4>
                         <div class="activity-item">
-                            <strong>Nueva venta registrada</strong>
-                            <p class="mb-0">Ticket #2024-001245 - $85.50</p>
+                            <strong>Nuevo producto agregado</strong>
+                            <p class="mb-0">AGUA NATURAL BONAFONT 1 LT - Categoría: Bebidas</p>
                             <span class="time">Hace 5 minutos</span>
                         </div>
                         <div class="activity-item">
-                            <strong>Stock actualizado</strong>
-                            <p class="mb-0">Agua Bonafont 1L - 50 unidades agregadas</p>
+                            <strong>Viático aprobado</strong>
+                            <p class="mb-0">Ticket #2024-001 - Usuario: Juan Pérez - $450.00</p>
                             <span class="time">Hace 15 minutos</span>
                         </div>
                         <div class="activity-item">
-                            <strong>Nueva categoría creada</strong>
-                            <p class="mb-0">Categoría: Bebidas Energéticas</p>
+                            <strong>Clasificación automática</strong>
+                            <p class="mb-0">15 productos clasificados exitosamente</p>
                             <span class="time">Hace 1 hora</span>
                         </div>
                         <div class="activity-item">
-                            <strong>Campaña enviada</strong>
-                            <p class="mb-0">Promoción "Agua 2x1" - 450 clientes</p>
+                            <strong>Nueva categoría creada</strong>
+                            <p class="mb-0">Categoría: Hospedaje - 12 palabras clave</p>
                             <span class="time">Hace 2 horas</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-md-4">
-                    <div class="chart-card">
-                        <h4><i class="fas fa-bolt"></i> Acciones Rápidas</h4>
-                        <button class="quick-action-btn">
-                            <i class="fas fa-plus-circle"></i>
-                            <div>
-                                <strong>Nueva Venta</strong>
-                                <small class="d-block text-muted">Registrar ticket</small>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn">
-                            <i class="fas fa-box-open"></i>
-                            <div>
-                                <strong>Agregar Producto</strong>
-                                <small class="d-block text-muted">Nuevo item</small>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn">
-                            <i class="fas fa-search"></i>
-                            <div>
-                                <strong>Búsqueda Semántica</strong>
-                                <small class="d-block text-muted">Buscar productos</small>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn">
-                            <i class="fas fa-bullhorn"></i>
-                            <div>
-                                <strong>Nueva Campaña</strong>
-                                <small class="d-block text-muted">Marketing dirigido</small>
-                            </div>
-                        </button>
+            <!-- Info Card -->
+            <div class="row g-4 mt-2">
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        <h5><i class="fas fa-info-circle"></i> Información del Sistema</h5>
+                        <p class="mb-0">
+                            <strong>Sistema de Clasificación:</strong> El sistema utiliza los productos y categorías registradas 
+                            para clasificar automáticamente los gastos de viáticos usando Python y análisis semántico.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -569,72 +540,7 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Chart.js Scripts -->
     <script>
-        // Sales Chart
-        const salesCtx = document.getElementById('salesChart').getContext('2d');
-        new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                datasets: [{
-                    label: 'Ventas ($)',
-                    data: [12500, 15800, 14200, 16900, 18450, 19200, 18450],
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Products Chart
-        const productsCtx = document.getElementById('productsChart').getContext('2d');
-        new Chart(productsCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Agua', 'Refrescos', 'Botanas', 'Lácteos', 'Otros'],
-                datasets: [{
-                    data: [35, 25, 20, 15, 5],
-                    backgroundColor: [
-                        '#2563eb',
-                        '#10b981',
-                        '#f59e0b',
-                        '#ef4444',
-                        '#8b5cf6'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-
         // Sidebar Toggle for Mobile
         document.getElementById('sidebarToggle')?.addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
