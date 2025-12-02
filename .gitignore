@@ -1,0 +1,47 @@
+# ====== General ======
+*.log
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# ====== VS Code ======
+.vscode/
+
+# ====== Python ======
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env/
+venv/
+.venv/
+*.egg-info/
+.cache/
+dist/
+build/
+
+# ====== FastAPI / Uvicorn ======
+*.pid
+
+# ====== Java / Spring Boot ======
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# ====== Maven ======
+.mvn/
+.settings/
+dependency-reduced-pom.xml
+
+# ====== Gradle ======
+.gradle/
+build/
+!gradle-wrapper.jar
+
+# ====== Logs ======
+logs/
+*.log
