@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div th:fragment="detalle">
+        <!-- Información General -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-hashtag"></i> Número de Ticket
+                    </span>
+                    <span class="detail-value" th:text="${ticket.numeroTicket}">TKT-001</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-user"></i> Usuario
+                    </span>
+                    <span class="detail-value" th:text="${ticket.usuario.nombreCompleto}">Usuario</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-calendar"></i> Fecha de Compra
+                    </span>
+                    <span class="detail-value" th:text="${#temporals.format(ticket.fechaHora, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-info-circle"></i> Estado
+                    </span>
+                    <span class="badge" 
+                          th:classappend="${ticket.estado == 'clasificado'} ? 'bg-success' : (${ticket.estado == 'pendiente_clasificacion'} ? 'bg-warning' : 'bg-secondary')"
+                          th:text="${ticket.estado}">
+                        Estado
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-money-bill"></i> Subtotal
+                    </span>
+                    <span class="detail-value">
+                        $<span th:text="${#numbers.formatDecimal(ticket.subtotal, 1, 2)}">0.00</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-percentage"></i> Impuestos
+                    </span>
+                    <span class="detail-value">
+                        $<span th:text="${#numbers.formatDecimal(ticket.impuestos, 1, 2)}">0.00</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-tag"></i> Descuentos
+                    </span>
+                    <span class="detail-value text-danger">
+                        -$<span th:text="${#numbers.formatDecimal(ticket.descuentos, 1, 2)}">0.00</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-receipt"></i> <strong>TOTAL</strong>
+                    </span>
+                    <span class="detail-value">
+                        <strong class="text-success" style="font-size: 1.25rem;">
+                            $<span th:text="${#numbers.formatDecimal(ticket.total, 1, 2)}">0.00</span>
+                        </strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="row mb-4" th:if="${ticket.metodoPago != null || ticket.observaciones != null}">
+            <div class="col-12">
+                <h6 class="mb-3"><i class="fas fa-info-circle"></i> Información Adicional</h6>
+                <div class="detail-row" th:if="${ticket.metodoPago != null}">
+                    <span class="detail-label">
+                        <i class="fas fa-credit-card"></i> Método de Pago
+                    </span>
+                    <span class="detail-value" th:text="${ticket.metodoPago}">Efectivo</span>
+                </div>
+                <div class="detail-row" th:if="${ticket.observaciones != null}">
+                    <span class="detail-label">
+                        <i class="fas fa-comment"></i> Observaciones
+                    </span>
+                    <span class="detail-value" th:text="${ticket.observaciones}">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos Comprados -->
+        <div class="row">
+            <div class="col-12">
+                <h6 class="mb-3">
+                    <i class="fas fa-shopping-cart"></i> Productos Comprados 
+                    <span class="badge bg-primary" th:text="${ticket.items.size()} + ' items'">0</span>
+                </h6>
+                
+                <div class="producto-item" th:each="item : ${ticket.items}">
+                    <div class="row align-items-center">
+                        <div class="col-md-5">
+                            <strong th:text="${item.producto.nombre}">Producto</strong>
+                            <br>
+                            <small class="text-muted" th:if="${item.producto.marca != null}">
+                                Marca: <span th:text="${item.producto.marca}">Marca</span>
+                            </small>
+                            <br>
+                            <small class="text-muted" th:if="${item.producto.categoria != null}">
+                                <i class="fas fa-tag"></i> 
+                                <span th:text="${item.producto.categoria.nombre}">Categoría</span>
+                            </small>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <strong>Cantidad</strong><br>
+                            <span class="badge bg-secondary" th:text="${item.cantidad}">1</span>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <strong>P. Unitario</strong><br>
+                            $<span th:text="${#numbers.formatDecimal(item.precioUnitario, 1, 2)}">0.00</span>
+                        </div>
+                        <div class="col-md-2 text-center" th:if="${item.descuento != null && item.descuento > 0}">
+                            <strong>Descuento</strong><br>
+                            <span class="text-danger">
+                                -$<span th:text="${#numbers.formatDecimal(item.descuento, 1, 2)}">0.00</span>
+                            </span>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <strong>Subtotal</strong><br>
+                            <span class="text-success" style="font-size: 1.1rem; font-weight: 600;">
+                                $<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">0.00</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Final -->
+                <div class="mt-4 p-3" style="background: #f0fdf4; border-radius: 10px; border: 2px solid #10b981;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-calculator"></i> Total de la Compra</h5>
+                        <h4 class="mb-0 text-success">
+                            $<span th:text="${#numbers.formatDecimal(ticket.total, 1, 2)}">0.00</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para ver imagen -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <button class="btn btn-primary" 
+                    data-img-url="${ticket.imagenTicket}"
+                    onclick="verImagen(this.dataset.imgUrl)">
+                    <i class="fas fa-image"></i> Ver Imagen del Ticket
+                </button>
+            </div>
+        </div>
+
+        <style>
+            .producto-item {
+                background: #f9fafb;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 10px;
+                border-left: 3px solid #2563eb;
+                transition: all 0.3s ease;
+            }
+
+            .producto-item:hover {
+                background: #f3f4f6;
+                transform: translateX(5px);
+            }
+
+            .detail-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+
+            .detail-label {
+                font-weight: 600;
+                color: #6b7280;
+            }
+
+            .detail-value {
+                color: #1f2937;
+                font-weight: 500;
+            }
+        </style>
+    </div>
+</body>
+</html>

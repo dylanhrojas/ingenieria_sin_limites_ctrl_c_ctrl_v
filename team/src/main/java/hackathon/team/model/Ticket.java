@@ -52,11 +52,16 @@ public class Ticket {
     @Column(name = "metodo_pago", length = 50)
     private String metodoPago;
 
-    @Column(length = 20)
+    // ⭐ CAMBIO 1: length = 50 (antes era 20)
+    @Column(length = 50)
     private String estado = "completado";
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
+
+    // ⭐ CAMBIO 2: Campo nuevo para imagen
+    @Column(name = "imagen_ticket", length = 255)
+    private String imagenTicket;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TicketItem> items = new ArrayList<>();

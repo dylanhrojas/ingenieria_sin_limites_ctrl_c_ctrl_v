@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Categoría - Sistema de Viáticos</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-header .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid white;
+        }
+
+        .sidebar-menu a i {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-card h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        .invalid-feedback {
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-box i {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .info-box h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #475569;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-custom .breadcrumb-item {
+            color: #64748b;
+        }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Tag Input Style */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            min-height: 50px;
+            cursor: text;
+        }
+
+        .tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tag .remove-tag {
+            cursor: pointer;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        .tag .remove-tag:hover {
+            opacity: 1;
+        }
+
+        /* Helper Text */
+        .form-text {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Switch */
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h3>Sistema de Viáticos</h3>
+            <small>OneCard</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <a th:href="@{/dashboard}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/productos}">
+                <i class="fas fa-box"></i>
+                <span>Productos</span>
+            </a>
+            <a th:href="@{/categorias}" class="active">
+                <i class="fas fa-tags"></i>
+                <span>Categorías</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-receipt"></i>
+                <span>Viáticos</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-light w-100">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h5 class="mb-0 ms-3">Nueva Categoría</h5>
+            </div>
+
+            <div class="user-menu">
+                <div class="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                        </div>
+                        <div class="text-start d-none d-md-block">
+                            <small class="text-muted d-block">Bienvenido</small>
+                            <strong sec:authentication="name">Usuario</strong>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/categorias}">Categorías</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Nueva Categoría</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-plus-circle"></i> Nueva Categoría
+                </h1>
+                <p class="page-subtitle">Registra una nueva categoría para clasificación de productos</p>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <div class="d-flex">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <h5>Información sobre Categorías</h5>
+                        <p>
+                            Las categorías permiten organizar los productos y realizar clasificación automática de viáticos. 
+                            Puedes crear categorías principales y subcategorías jerárquicas. Las palabras clave ayudarán 
+                            al sistema de clasificación semántica a identificar productos de forma automática.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="form-card">
+                <h4><i class="fas fa-edit"></i> Información de la Categoría</h4>
+
+                <!-- Alert Messages -->
+                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${mensaje}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Form -->
+                <form th:action="@{/categorias/guardar}" th:object="${categoria}" method="post">
+                    <div class="row">
+                        <!-- Nombre -->
+                        <div class="col-md-6 mb-4">
+                            <label for="nombre" class="form-label">
+                                <i class="fas fa-tag"></i> Nombre de la Categoría *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   th:field="*{nombre}"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                   placeholder="Ej: Alimentos y Bebidas"
+                                   required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+                                Error en nombre
+                            </div>
+                            <small class="form-text">Nombre único e identificativo de la categoría</small>
+                        </div>
+
+                        <!-- Categoría Padre -->
+                        <div class="col-md-6 mb-4">
+                            <label for="categoriaPadreId" class="form-label">
+                                <i class="fas fa-folder-tree"></i> Categoría Padre (Opcional)
+                            </label>
+                            <select class="form-select" 
+                                    id="categoriaPadreId" 
+                                    th:field="*{categoriaPadreId}">
+                                <option value="">-- Sin categoría padre (Raíz) --</option>
+                                <option th:each="cat : ${categorias}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.nombre}">
+                                    Categoría
+                                </option>
+                            </select>
+                            <small class="form-text">Selecciona una categoría padre para crear una subcategoría</small>
+                        </div>
+
+                        <!-- Nivel -->
+                        <div class="col-md-6 mb-4">
+                            <label for="nivel" class="form-label">
+                                <i class="fas fa-layer-group"></i> Nivel *
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="nivel" 
+                                   th:field="*{nivel}"
+                                   min="1" 
+                                   max="5"
+                                   value="1"
+                                   required>
+                            <small class="form-text">Nivel jerárquico (1 = raíz, 2-5 = subcategorías)</small>
+                        </div>
+
+                        <!-- Estado Activa -->
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-toggle-on"></i> Estado
+                            </label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="activa" 
+                                       th:field="*{activa}"
+                                       checked>
+                                <label class="form-check-label" for="activa">
+                                    Categoría activa
+                                </label>
+                            </div>
+                            <small class="form-text">Solo las categorías activas se usarán para clasificación</small>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="col-12 mb-4">
+                            <label for="descripcion" class="form-label">
+                                <i class="fas fa-align-left"></i> Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      th:field="*{descripcion}"
+                                      rows="4"
+                                      placeholder="Descripción detallada de la categoría y su propósito..."></textarea>
+                            <small class="form-text">Descripción opcional para documentar el propósito de la categoría</small>
+                        </div>
+
+                        <!-- Palabras Clave -->
+                        <div class="col-12 mb-4">
+                            <label for="palabrasClave" class="form-label">
+                                <i class="fas fa-key"></i> Palabras Clave para Clasificación *
+                            </label>
+                            <textarea class="form-control" 
+                                      id="palabrasClave" 
+                                      th:field="*{palabrasClave}"
+                                      rows="5"
+                                      placeholder="comida, alimento, desayuno, almuerzo, cena, restaurante, food, eat..."
+                                      required></textarea>
+                            <small class="form-text">
+                                <strong>Importante:</strong> Separa las palabras clave con comas. 
+                                Incluye sinónimos, variaciones y términos relacionados. 
+                                Estas palabras se usarán para la clasificación automática de productos.
+                            </small>
+                        </div>
+
+                        <!-- Ejemplo de Palabras Clave -->
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-light border">
+                                <h6 class="mb-3"><i class="fas fa-lightbulb"></i> Ejemplos de Palabras Clave:</h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Alimentos:</strong>
+                                        <p class="small mb-0 text-muted">comida, alimento, comestible, food, eat, desayuno, lunch, cena</p>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Bebidas:</strong>
+                                        <p class="small mb-0 text-muted">bebida, drink, agua, refresco, jugo, café, té, water, soda</p>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Transporte:</strong>
+                                        <p class="small mb-0 text-muted">transporte, taxi, uber, bus, avión, flight, viaje, gasolina, combustible</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-3 justify-content-end pt-3 border-top">
+                        <a th:href="@{/categorias}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Categoría
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-brain"></i> Clasificación Inteligente</h6>
+                        <p class="mb-0 small">
+                            El sistema utiliza las palabras clave para realizar clasificación semántica automática 
+                            de productos en tickets de viáticos.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Nota Importante</h6>
+                        <p class="mb-0 small">
+                            Una vez creada la categoría, puedes editarla en cualquier momento. 
+                            Las categorías inactivas no se usarán para clasificación.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Sidebar Toggle for Mobile
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Initialize Select2
+        $(document).ready(function() {
+            $('#categoriaPadreId').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Sin categoría padre (Raíz) --',
+                allowClear: true
+            });
+
+            // Auto-ajustar nivel basado en categoría padre
+            $('#categoriaPadreId').on('change', function() {
+                const selectedOption = $(this).find('option:selected');
+                if (selectedOption.val()) {
+                    // Si selecciona una categoría padre, incrementar el nivel
+                    $('#nivel').val(2);
+                } else {
+                    // Si no hay padre, nivel 1
+                    $('#nivel').val(1);
+                }
+            });
+        });
+
+        // Validation helper
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('form')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Ticket - Sistema de Viáticos</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .sidebar-header .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 4px solid white;
+        }
+
+        .sidebar-menu a i {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .form-card h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
+        }
+
+        /* Image Upload */
+        .image-upload-area {
+            border: 3px dashed #e2e8f0;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: var(--light-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .image-upload-area.dragover {
+            border-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Producto Row */
+        .producto-row {
+            background: var(--light-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .producto-row .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            border-radius: 10px;
+        }
+
+        /* Total Display */
+        .total-display {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .total-display h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-custom {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h3>Sistema de Viáticos</h3>
+            <small>OneCard</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <a th:href="@{/dashboard}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/productos}">
+                <i class="fas fa-box"></i>
+                <span>Productos</span>
+            </a>
+            <a th:href="@{/categorias}">
+                <i class="fas fa-tags"></i>
+                <span>Categorías</span>
+            </a>
+            <a th:href="@{/tickets/subir}" class="active">
+                <i class="fas fa-upload"></i>
+                <span>Subir Ticket</span>
+            </a>
+            <a th:href="@{/tickets/lista}">
+                <i class="fas fa-receipt"></i>
+                <span>Viáticos</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-light w-100">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h5 class="mb-0 ms-3">Subir Ticket</h5>
+            </div>
+
+            <div class="user-menu">
+                <div class="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                        </div>
+                        <div class="text-start d-none d-md-block">
+                            <small class="text-muted d-block">Bienvenido</small>
+                            <strong sec:authentication="name">Usuario</strong>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Subir Ticket</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-upload"></i> Subir Ticket de Compra
+                </h1>
+                <p class="text-muted">Sube la imagen de tu ticket y registra los productos comprados</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Form -->
+            <form th:action="@{/tickets/guardar}" th:object="${ticketDTO}" method="post" enctype="multipart/form-data" id="ticketForm">
+                
+                <div class="row">
+                    <!-- Columna Izquierda: Imagen y Datos Generales -->
+                    <div class="col-lg-5">
+                        <!-- Imagen del Ticket -->
+                        <div class="form-card">
+                            <h4><i class="fas fa-image"></i> Imagen del Ticket</h4>
+                            
+                            <div class="image-upload-area" id="imageUploadArea" style="cursor: pointer;" role="button" tabindex="0" aria-label="Área para subir imagen del ticket">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <h5>Arrastra tu imagen aquí</h5>
+                                <p class="text-muted">o haz clic para seleccionar</p>
+                                <input type="file" 
+                                       class="d-none" 
+                                       id="imagenTicket" 
+                                       name="imagenTicket"
+                                       accept="image/jpeg,image/png,image/gif,image/webp"
+                                       required
+                                       aria-label="Seleccionar archivo de imagen">
+                                <small class="text-muted">Formatos: JPG, PNG, GIF, WEBP (Máx. 10MB)</small>
+                            </div>
+                            
+                            <div id="imagePreviewContainer" class="d-none">
+                                <img id="imagePreview" class="image-preview" alt="Vista previa de la imagen del ticket">
+                                <button type="button" class="btn btn-danger btn-sm mt-2" id="removeImage" aria-label="Cambiar imagen del ticket" title="Cambiar imagen">
+                                    <i class="fas fa-trash" aria-hidden="true"></i> Cambiar Imagen
+                                </button>
+                            </div>
+
+                            <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('imagenTicket')}" th:errors="*{imagenTicket}">
+                                Error en imagen
+                            </div>
+                        </div>
+
+                        <!-- Datos Generales -->
+                        <div class="form-card">
+                            <h4><i class="fas fa-info-circle"></i> Datos Generales</h4>
+
+                            <div class="mb-3">
+                                <label for="usuarioId" class="form-label">
+                                    <i class="fas fa-user"></i> Usuario *
+                                </label>
+                                <select class="form-select" id="usuarioId" th:field="*{usuarioId}" required>
+                                    <option value="">-- Seleccionar Usuario --</option>
+                                    <option th:each="usuario : ${usuarios}" 
+                                            th:value="${usuario.id}" 
+                                            th:text="${usuario.nombreCompleto}">
+                                        Usuario
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="metodoPago" class="form-label">
+                                    <i class="fas fa-credit-card"></i> Método de Pago
+                                </label>
+                                <select class="form-select" id="metodoPago" th:field="*{metodoPago}">
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                    <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="observaciones" class="form-label">
+                                    <i class="fas fa-comment"></i> Observaciones
+                                </label>
+                                <textarea class="form-control" 
+                                          id="observaciones" 
+                                          th:field="*{observaciones}"
+                                          rows="3"
+                                          placeholder="Observaciones adicionales..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="total-display">
+                            <p class="mb-0">Total del Ticket</p>
+                            <h3 id="totalDisplay">$0.00</h3>
+                            <input type="hidden" id="total" th:field="*{total}">
+                            <input type="hidden" id="subtotal" th:field="*{subtotal}">
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Productos -->
+                    <div class="col-lg-7">
+                        <div class="form-card">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="mb-0"><i class="fas fa-shopping-cart"></i> Productos Comprados</h4>
+                                <button type="button" class="btn btn-success btn-sm" id="agregarProducto" aria-label="Agregar nuevo producto" title="Agregar Producto">
+                                    <i class="fas fa-plus" aria-hidden="true"></i> Agregar Producto
+                                </button>
+                            </div>
+
+                            <div id="productosContainer">
+                                <!-- Los productos se agregarán dinámicamente aquí -->
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>Tip:</strong> Agrega todos los productos que aparecen en tu ticket con sus cantidades y precios.
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a th:href="@{/dashboard}" class="btn btn-secondary" aria-label="Cancelar y volver al dashboard" title="Cancelar">
+                                <i class="fas fa-times" aria-hidden="true"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn" aria-label="Guardar ticket de compra" title="Guardar Ticket">
+                                <i class="fas fa-save" aria-hidden="true"></i> Guardar Ticket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            let productoIndex = 0;
+
+            // Initialize Select2
+            $('#usuarioId').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Seleccionar Usuario --'
+            });
+
+            // Image Upload - Versión simple y directa
+            const imageUploadArea = $('#imageUploadArea');
+            const imageInput = $('#imagenTicket');
+            const imagePreview = $('#imagePreview');
+            const imagePreviewContainer = $('#imagePreviewContainer');
+
+            // Click simple en el área de upload
+            imageUploadArea.on('click', function() {
+                imageInput[0].click();
+            });
+
+            imageInput.on('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.attr('src', e.target.result);
+                        imageUploadArea.addClass('d-none');
+                        imagePreviewContainer.removeClass('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            $('#removeImage').on('click', function() {
+                imageInput.val('');
+                imagePreview.attr('src', '');
+                imagePreviewContainer.addClass('d-none');
+                imageUploadArea.removeClass('d-none');
+            });
+
+            // Drag & Drop
+            imageUploadArea.on('dragover', function(e) {
+                e.preventDefault();
+                $(this).addClass('dragover');
+            });
+
+            imageUploadArea.on('dragleave', function(e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+            });
+
+            imageUploadArea.on('drop', function(e) {
+                e.preventDefault();
+                $(this).removeClass('dragover');
+                
+                const file = e.originalEvent.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    imageInput[0].files = e.originalEvent.dataTransfer.files;
+                    imageInput.trigger('change');
+                }
+            });
+
+            // Agregar Producto
+            $('#agregarProducto').on('click', function() {
+                agregarProductoRow();
+            });
+
+            function agregarProductoRow() {
+                const html = `
+                    <div class="producto-row" data-index="${productoIndex}">
+                        <button type="button" class="btn btn-danger btn-sm remove-btn" onclick="removerProducto(${productoIndex})" aria-label="Eliminar producto" title="Eliminar producto">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="nombreProducto_${productoIndex}">Nombre del Producto *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombreProducto_${productoIndex}"
+                                       name="productos[${productoIndex}].nombreProducto"
+                                       placeholder="Ej: Agua Bonafont"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="marca_${productoIndex}">Marca</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="marca_${productoIndex}"
+                                       name="productos[${productoIndex}].marca"
+                                       placeholder="Ej: Bonafont">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="cantidad_${productoIndex}">Cantidad *</label>
+                                <input type="number" 
+                                       class="form-control cantidad-input" 
+                                       id="cantidad_${productoIndex}"
+                                       name="productos[${productoIndex}].cantidad"
+                                       min="1"
+                                       value="1"
+                                       required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="precioUnitario_${productoIndex}">Precio Unitario *</label>
+                                <input type="number" 
+                                       class="form-control precio-input" 
+                                       id="precioUnitario_${productoIndex}"
+                                       name="productos[${productoIndex}].precioUnitario"
+                                       step="0.01"
+                                       min="0.01"
+                                       placeholder="0.00"
+                                       required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="descuento_${productoIndex}">Descuento</label>
+                                <input type="number" 
+                                       class="form-control descuento-input" 
+                                       id="descuento_${productoIndex}"
+                                       name="productos[${productoIndex}].descuento"
+                                       step="0.01"
+                                       min="0"
+                                       value="0"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label" for="categoria_${productoIndex}">Categoría (Opcional)</label>
+                                <select class="form-select categoria-select" 
+                                        id="categoria_${productoIndex}"
+                                        name="productos[${productoIndex}].categoriaId">
+                                    <option value="">-- Sin categoría --</option>
+                                    <option th:each="cat : \${categorias}" 
+                                            th:value="\${cat.id}" 
+                                            th:text="\${cat.nombre}">
+                                        Categoría
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-light mb-0">
+                                    <strong>Subtotal:</strong> $<span class="subtotal-display">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('#productosContainer').append(html);
+                
+                // Initialize Select2 for the new category select
+                $(`.producto-row[data-index="${productoIndex}"] .categoria-select`).select2({
+                    theme: 'bootstrap-5',
+                    placeholder: '-- Sin categoría --',
+                    allowClear: true
+                });
+                
+                productoIndex++;
+                calcularTotal();
+            }
+
+            // Remover Producto
+            window.removerProducto = function(index) {
+                $(`.producto-row[data-index="${index}"]`).remove();
+                calcularTotal();
+            };
+
+            // Calcular Total
+            $(document).on('input', '.cantidad-input, .precio-input, .descuento-input', function() {
+                const row = $(this).closest('.producto-row');
+                calcularSubtotalProducto(row);
+                calcularTotal();
+            });
+
+            function calcularSubtotalProducto(row) {
+                const cantidad = parseFloat(row.find('.cantidad-input').val()) || 0;
+                const precio = parseFloat(row.find('.precio-input').val()) || 0;
+                const descuento = parseFloat(row.find('.descuento-input').val()) || 0;
+                
+                const subtotal = (cantidad * precio) - descuento;
+                row.find('.subtotal-display').text(subtotal.toFixed(2));
+            }
+
+            function calcularTotal() {
+                let total = 0;
+                
+                $('.producto-row').each(function() {
+                    const cantidad = parseFloat($(this).find('.cantidad-input').val()) || 0;
+                    const precio = parseFloat($(this).find('.precio-input').val()) || 0;
+                    const descuento = parseFloat($(this).find('.descuento-input').val()) || 0;
+                    
+                    total += (cantidad * precio) - descuento;
+                });
+                
+                $('#totalDisplay').text('$' + total.toFixed(2));
+                $('#total').val(total.toFixed(2));
+                $('#subtotal').val(total.toFixed(2));
+            }
+
+            // Agregar primer producto al cargar
+            agregarProductoRow();
+
+            // Sidebar Toggle
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+            });
+
+            // Validación antes de enviar
+            $('#ticketForm').on('submit', function(e) {
+                if (!imageInput[0].files || imageInput[0].files.length === 0) {
+                    e.preventDefault();
+                    alert('Debe subir una imagen del ticket');
+                    return false;
+                }
+
+                const productosCount = $('.producto-row').length;
+                if (productosCount === 0) {
+                    e.preventDefault();
+                    alert('Debe agregar al menos un producto');
+                    return false;
+                }
+
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * Controlador principal para Landing Page y Home
+ * Controlador principal para Landing Page y páginas de error
  * Conector Semántico - OneCard
  */
 @Controller
@@ -19,15 +19,6 @@ public class HomeController {
         model.addAttribute("titulo", "Conector Semántico - OneCard");
         model.addAttribute("descripcion", "Sistema inteligente de búsqueda y gestión de productos");
         return "landing";
-    }
-
-    /**
-     * Dashboard (página principal después del login)
-     */
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("titulo", "Dashboard");
-        return "dashboard";
     }
 
     /**
