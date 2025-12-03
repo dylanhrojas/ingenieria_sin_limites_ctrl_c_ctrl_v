@@ -159,13 +159,17 @@ source venv/bin/activate
 
 4. Instalar dependencias:
 ```bash
-pip install flask flask-cors psycopg2-binary numpy scikit-learn
+pip install -r requirements.txt
 ```
 
-5. Cargar datos iniciales (opcional):
+**Nota:** Las dependencias incluyen Flask, Flask-CORS, psycopg2-binary, NumPy, scikit-learn y pandas (opcional para carga de datos).
+
+5. Cargar datos iniciales (opcional, solo si no usaste bd-sistema.sql):
 ```bash
 python load_data_to_postgres.py
 ```
+
+**Nota:** Si ya ejecutaste el archivo `bd-sistema.sql` en el Paso 2, puedes omitir este paso ya que la base de datos ya contiene todos los datos necesarios.
 
 6. Iniciar API de búsqueda semántica:
 ```bash
@@ -256,9 +260,11 @@ ingenieria_sin_limites_ctrl_c_ctrl_v/
 │   │   │       └── application.properties
 │   └── pom.xml                       # Dependencias Maven
 ├── python/                           # Motor de IA
-│   ├── semantic_search_api.py        # API de búsqueda semántica
-│   ├── load_data_to_postgres.py      # Script de carga de datos
-│   └── search_demo.html              # Demo de búsqueda
+│   ├── semantic_search_api.py        # API de búsqueda semántica (Flask)
+│   ├── load_data_to_postgres.py      # Script de carga de datos (opcional)
+│   ├── requirements.txt              # Dependencias Python
+│   └── venv/                         # Entorno virtual (ignorado en git)
+├── bd-sistema.sql                    # Script SQL para poblar la BD
 └── README.md                         # Este archivo
 ```
 
