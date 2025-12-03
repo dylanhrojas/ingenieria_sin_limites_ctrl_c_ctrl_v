@@ -1,6 +1,6 @@
 # Conector Semántico - OneCard
 
-**Equipo:** Ingeniería Sin Límites (Ctrl+C Ctrl+V)
+**Equipo:** Ctrl+C Ctrl+V
 
 ---
 
