@@ -255,7 +255,7 @@ def main():
         category_ids = insert_categories(conn)
 
         # 2. Cargar productos desde DetalleFacturas_clean.csv
-        csv_path = r'C:\Users\Dylan\Documents\ingenieria_sin_limites_ctrl_c_ctrl_v\python\app\data\DetalleFacturas_clean.csv'
+        csv_path = 'data/DetalleFacturas_clean.csv'
         inserted = load_products_from_csv(csv_path, category_ids, conn)
 
         print("\n" + "=" * 60)

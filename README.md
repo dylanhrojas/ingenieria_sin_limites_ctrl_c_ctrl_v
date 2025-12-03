@@ -263,6 +263,11 @@ ingenieria_sin_limites_ctrl_c_ctrl_v/
 │   ├── semantic_search_api.py        # API de búsqueda semántica (Flask)
 │   ├── load_data_to_postgres.py      # Script de carga de datos (opcional)
 │   ├── requirements.txt              # Dependencias Python
+│   ├── data/                         # Datos CSV (opcional)
+│   │   ├── DetalleFacturas.csv       # Dataset original
+│   │   └── DetalleFacturas_clean.csv # Dataset limpio
+│   ├── utils/                        # Utilidades
+│   │   └── clean.ipynb               # Notebook para limpiar datos
 │   └── venv/                         # Entorno virtual (ignorado en git)
 ├── bd-sistema.sql                    # Script SQL para poblar la BD
 └── README.md                         # Este archivo

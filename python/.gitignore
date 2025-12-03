@@ -23,10 +23,15 @@ ENV/
 # Logs
 *.log
 
-# Data files (if any)
-*.csv
-*.json
-*.pkl
+# Data files (optional, can be regenerated)
+# Note: CSVs are kept in git for ease of setup
+# Uncomment to exclude them:
+# data/*.csv
 
-# App directory (not used)
-app/
+# Embeddings and models
+*.pkl
+*.h5
+*.bin
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
