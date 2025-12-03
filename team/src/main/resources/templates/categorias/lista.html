@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorías - Sistema de Viáticos</title>
+    <title>Categorías - Conector Semántico OneCard</title>
     
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
@@ -22,14 +22,22 @@
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
+            --info-color: #3b82f6;
             --dark-color: #1e293b;
             --light-color: #f8fafc;
             --sidebar-width: 260px;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         /* Sidebar */
@@ -44,24 +52,53 @@
             overflow-y: auto;
             transition: all 0.3s ease;
             z-index: 1000;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0;
+            background: rgba(0,0,0,0.1);
         }
 
         .sidebar-header .logo {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .sidebar-header small {
+            opacity: 0.8;
+            font-size: 0.85rem;
         }
 
         .sidebar-menu {
@@ -71,22 +108,52 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: rgba(255,255,255,0.8);
             text-decoration: none;
             transition: all 0.3s ease;
+            position: relative;
+            margin: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 70%;
+            background: white;
+            border-radius: 0 5px 5px 0;
+            transition: width 0.3s ease;
         }
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             color: white;
-            border-left: 4px solid white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active::before {
+            width: 4px;
         }
 
         .sidebar-menu a i {
             width: 30px;
             font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu .menu-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 20px 10px;
+            color: rgba(255,255,255,0.6);
         }
 
         .sidebar-footer {
@@ -95,23 +162,50 @@
             width: 100%;
             padding: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer .btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer .btn:hover {
+            background: white;
+            color: var(--primary-color);
         }
 
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
-            padding: 0;
             min-height: 100vh;
+            background: var(--light-color);
         }
 
         /* Top Navbar */
         .top-navbar {
             background: white;
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
         }
 
         .user-menu {
@@ -121,15 +215,17 @@
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         /* Dashboard Content */
@@ -138,98 +234,345 @@
         }
 
         .page-header {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .page-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .page-subtitle {
             color: #64748b;
+            font-size: 1rem;
         }
 
-        /* Table Card */
-        .table-card {
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stats-card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
         }
 
-        .table-card h4 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-color);
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
         }
 
-        /* Custom Table */
-        .table {
-            margin-bottom: 0;
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
         }
 
-        .table thead th {
-            background: var(--light-color);
-            color: var(--dark-color);
-            font-weight: 600;
-            border-bottom: 2px solid #dee2e6;
-            padding: 15px;
+        .stats-card:hover::before {
+            transform: scaleX(1);
         }
 
-        .table tbody td {
-            padding: 15px;
-            vertical-align: middle;
+        .stats-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        /* Badges */
-        .badge {
-            padding: 6px 12px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            border-radius: 6px;
+        .stats-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            opacity: 0.2;
+            filter: blur(15px);
         }
 
-        .badge-level {
-            background: rgba(37, 99, 235, 0.1);
+        .stats-card.primary .stats-icon {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.05));
             color: var(--primary-color);
         }
 
-        /* Buttons */
-        .btn-primary {
+        .stats-card.primary .stats-icon::after {
             background: var(--primary-color);
-            border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 600;
+        }
+
+        .stats-card.success .stats-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            color: var(--success-color);
+        }
+
+        .stats-card.success .stats-icon::after {
+            background: var(--success-color);
+        }
+
+        .stats-card.warning .stats-icon {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            color: var(--warning-color);
+        }
+
+        .stats-card.warning .stats-icon::after {
+            background: var(--warning-color);
+        }
+
+        .stats-card.info .stats-icon {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+            color: var(--info-color);
+        }
+
+        .stats-card.info .stats-icon::after {
+            background: var(--info-color);
+        }
+
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin: 10px 0;
+            line-height: 1;
+        }
+
+        .stats-label {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0,0,0,0.04);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 2px solid #f1f5f9;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.5), rgba(241, 245, 249, 0.5));
+        }
+
+        .content-card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .content-card-title i {
+            color: var(--primary-color);
+        }
+
+        .content-card-body {
+            padding: 30px;
+        }
+
+        /* Search Box */
+        .search-box {
+            max-width: 350px;
+        }
+
+        .search-box .form-control {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 18px;
             transition: all 0.3s ease;
         }
 
+        .search-box .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        }
+
+        /* Table Styles */
+        .table {
+            margin: 0;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8));
+            border-bottom: 2px solid #e2e8f0;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.8px;
+            padding: 18px 15px;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.5));
+            transform: scale(1.01);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Categoria Info */
+        .categoria-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .categoria-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.05));
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .categoria-details h6 {
+            margin: 0 0 5px 0;
+            font-weight: 700;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+
+        .categoria-details small {
+            color: #64748b;
+            font-size: 0.85rem;
+            display: block;
+            line-height: 1.4;
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-level {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(37, 99, 235, 0.15));
+            color: #1e40af;
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .badge.bg-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.15)) !important;
+            color: #1e40af !important;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge.bg-secondary {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.2), rgba(100, 116, 139, 0.15)) !important;
+            color: #475569 !important;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.15)) !important;
+            color: #065f46 !important;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
         .btn-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
         }
 
         .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.875rem;
-            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            border-radius: 8px;
         }
 
         .btn-action {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             padding: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
+            border-radius: 8px;
             transition: all 0.3s ease;
         }
 
@@ -237,112 +580,158 @@
             transform: translateY(-2px);
         }
 
+        .btn-info {
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-group {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-flex;
+            gap: 2px;
+        }
+
         /* Alerts */
         .alert {
-            border-radius: 10px;
+            border-radius: 15px;
             border: none;
-            padding: 15px 20px;
-            margin-bottom: 25px;
+            padding: 18px 22px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            animation: slideDown 0.3s ease-out;
         }
 
-        .alert i {
-            margin-right: 10px;
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Search Box */
-        .search-box {
-            max-width: 400px;
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.1));
+            color: #065f46;
+            border-left: 4px solid var(--success-color);
         }
 
-        .search-box input {
-            border-radius: 10px;
-            padding: 10px 15px;
-            border: 2px solid #e2e8f0;
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
         }
 
-        /* Stats */
-        .stats-mini {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.1));
+            color: #92400e;
+            border-left: 4px solid var(--warning-color);
         }
 
-        .stat-item {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid var(--light-color);
-            flex: 1;
-            min-width: 200px;
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.1));
+            color: #1e40af;
+            border-left: 4px solid var(--info-color);
         }
 
-        .stat-item h3 {
-            font-size: 2rem;
+        .alert h6 {
             font-weight: 700;
-            color: var(--primary-color);
-            margin: 0;
-        }
-
-        .stat-item p {
-            margin: 5px 0 0 0;
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        /* Breadcrumb */
-        .breadcrumb-custom {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-        .breadcrumb-custom .breadcrumb-item {
-            color: #64748b;
-        }
-
-        .breadcrumb-custom .breadcrumb-item.active {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .breadcrumb-custom .breadcrumb-item a {
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .breadcrumb-custom .breadcrumb-item a:hover {
-            color: var(--primary-color);
-        }
-
-        /* Categoria Info */
-        .categoria-info {
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .categoria-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(37, 99, 235, 0.1);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
+        .alert i {
             font-size: 1.2rem;
         }
 
-        .categoria-details h6 {
-            margin: 0;
-            font-weight: 600;
-            color: var(--dark-color);
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(118, 75, 162, 0.08));
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
         }
 
-        .categoria-details small {
+        .info-box h6 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .info-box h6 i {
+            color: var(--info-color);
+            font-size: 1.3rem;
+        }
+
+        .info-box p {
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* DataTables Custom */
+        .dataTables_wrapper .dataTables_filter {
+            display: none;
+        }
+
+        .dataTables_wrapper .dataTables_info {
             color: #64748b;
+            font-weight: 500;
+            padding-top: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            padding-top: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin: 0 3px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border: none;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+            color: white !important;
+            border: none;
         }
 
         /* Responsive */
@@ -363,12 +752,26 @@
                 padding: 20px;
             }
 
-            .table-card {
-                padding: 20px;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
 
-            .stats-mini {
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .content-card-header {
                 flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .btn-group {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -378,16 +781,27 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <i class="fas fa-receipt"></i>
+                <i class="fas fa-credit-card"></i>
             </div>
-            <h3>Sistema de Viáticos</h3>
-            <small>OneCard</small>
+            <h3>Conector Semántico</h3>
+            <small>OneCard System</small>
         </div>
 
         <div class="sidebar-menu">
+            <div class="menu-label">Principal</div>
             <a th:href="@{/dashboard}">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-label">Gestión</div>
+            <a th:href="@{/tickets/subir}">
+                <i class="fas fa-upload"></i>
+                <span>Subir Ticket</span>
+            </a>
+            <a th:href="@{/tickets/lista}">
+                <i class="fas fa-receipt"></i>
+                <span>Lista de Tickets</span>
             </a>
             <a th:href="@{/productos}">
                 <i class="fas fa-box"></i>
@@ -397,11 +811,9 @@
                 <i class="fas fa-tags"></i>
                 <span>Categorías</span>
             </a>
-            <a href="#">
-                <i class="fas fa-receipt"></i>
-                <span>Viáticos</span>
-            </a>
-            <a href="#">
+            
+            <div class="menu-label">Sistema</div>
+            <a th:href="@{/usuarios}">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
             </a>
@@ -413,14 +825,10 @@
                 <i class="fas fa-cog"></i>
                 <span>Configuración</span>
             </a>
-        </div>
-
-        <div class="sidebar-footer">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-light w-100">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </div>
 
@@ -429,30 +837,36 @@
         <!-- Top Navbar -->
         <nav class="top-navbar">
             <div class="d-flex align-items-center">
-                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                <button class="btn btn-link d-md-none me-3" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h5 class="mb-0 ms-3">Categorías</h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Categorías</li>
+                    </ol>
+                </nav>
             </div>
 
             <div class="user-menu">
                 <div class="dropdown">
-                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-3" data-bs-toggle="dropdown">
+                        <div class="text-end d-none d-md-block">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Bienvenido</small>
+                            <strong sec:authentication="name" style="font-size: 0.9rem;">Usuario</strong>
+                        </div>
                         <div class="user-avatar">
                             <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                         </div>
-                        <div class="text-start d-none d-md-block">
-                            <small class="text-muted d-block">Bienvenido</small>
-                            <strong sec:authentication="name">Usuario</strong>
-                        </div>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </button>
                             </form>
                         </li>
@@ -463,195 +877,215 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-custom">
-                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Categorías</li>
-                </ol>
-            </nav>
-
             <!-- Page Header -->
-            <div class="page-header d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="page-title">
-                        <i class="fas fa-tags"></i> Gestión de Categorías
-                    </h1>
-                    <p class="page-subtitle">Administra las categorías para clasificación de productos</p>
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-tags"></i> Gestión de Categorías
+                        </h1>
+                        <p class="page-subtitle">Administra las categorías para clasificación automática de productos</p>
+                    </div>
+                    <a th:href="@{/categorias/nuevo}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nueva Categoría
+                    </a>
                 </div>
-                <a th:href="@{/categorias/nuevo}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nueva Categoría
-                </a>
             </div>
 
             <!-- Alert Messages -->
-            <div th:if="${mensaje}" th:class="'alert alert-' + ${tipoMensaje ?: 'success'} + ' alert-dismissible fade show'" role="alert">
+            <div th:if="${mensaje}" th:class="'alert alert-' + ${tipoMensaje ?: 'success'} + ' alert-dismissible fade show'">
                 <i class="fas" th:classappend="${tipoMensaje == 'success'} ? 'fa-check-circle' : (${tipoMensaje == 'warning'} ? 'fa-exclamation-triangle' : 'fa-info-circle')"></i>
-                <span th:text="${mensaje}"></span>
+                <span th:text="${mensaje}">Mensaje</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
                 <i class="fas fa-exclamation-circle"></i>
-                <span th:text="${error}"></span>
+                <span th:text="${error}">Error</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
 
-            <!-- Stats Mini -->
-            <div class="stats-mini">
-                <div class="stat-item">
-                    <h3 th:text="${categorias != null ? #lists.size(categorias) : 0}">0</h3>
-                    <p><i class="fas fa-tags"></i> Total Categorías</p>
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stats-card primary">
+                    <div class="stats-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stats-value" th:text="${categorias != null ? #lists.size(categorias) : 0}">0</div>
+                    <div class="stats-label">
+                        <i class="fas fa-layer-group"></i>
+                        Total Categorías
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <h3 th:text="${totalActivas != null ? totalActivas : 0}">0</h3>
-                    <p><i class="fas fa-check-circle"></i> Categorías Activas</p>
+
+                <div class="stats-card success">
+                    <div class="stats-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stats-value" th:text="${totalActivas != null ? totalActivas : 0}">0</div>
+                    <div class="stats-label">
+                        <i class="fas fa-toggle-on"></i>
+                        Categorías Activas
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <h3 th:text="${totalRaiz != null ? totalRaiz : 0}">0</h3>
-                    <p><i class="fas fa-folder"></i> Categorías Raíz</p>
+
+                <div class="stats-card warning">
+                    <div class="stats-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stats-value" th:text="${totalRaiz != null ? totalRaiz : 0}">0</div>
+                    <div class="stats-label">
+                        <i class="fas fa-sitemap"></i>
+                        Categorías Raíz
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <h3 th:text="${totalSubcategorias != null ? totalSubcategorias : 0}">0</h3>
-                    <p><i class="fas fa-folder-tree"></i> Subcategorías</p>
+
+                <div class="stats-card info">
+                    <div class="stats-icon">
+                        <i class="fas fa-folder-tree"></i>
+                    </div>
+                    <div class="stats-value" th:text="${totalSubcategorias != null ? totalSubcategorias : 0}">0</div>
+                    <div class="stats-label">
+                        <i class="fas fa-network-wired"></i>
+                        Subcategorías
+                    </div>
                 </div>
             </div>
 
             <!-- Table Card -->
-            <div class="table-card">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4><i class="fas fa-list"></i> Listado de Categorías</h4>
+            <div class="content-card">
+                <div class="content-card-header">
+                    <h4 class="content-card-title">
+                        <i class="fas fa-list"></i>
+                        Listado de Categorías
+                    </h4>
                     <div class="search-box">
                         <input type="text" id="searchInput" class="form-control" placeholder="Buscar categorías...">
                     </div>
                 </div>
-
-                <div class="table-responsive">
-                    <table id="categoriasTable" class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Categoría</th>
-                                <th>Nivel</th>
-                                <th>Padre</th>
-                                <th>Productos</th>
-                                <th>Subcategorías</th>
-                                <th>Estado</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="categoria : ${categorias}">
-                                <td>
-                                    <div class="categoria-info">
-                                        <div class="categoria-icon">
-                                            <i class="fas fa-tag"></i>
+                <div class="content-card-body">
+                    <div class="table-responsive">
+                        <table id="categoriasTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Nivel</th>
+                                    <th>Padre</th>
+                                    <th>Productos</th>
+                                    <th>Subcategorías</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="categoria : ${categorias}">
+                                    <td>
+                                        <div class="categoria-info">
+                                            <div class="categoria-icon">
+                                                <i class="fas fa-tag"></i>
+                                            </div>
+                                            <div class="categoria-details">
+                                                <h6 th:text="${categoria.nombre}">Nombre</h6>
+                                                <small th:text="${#strings.abbreviate(categoria.palabrasClave, 60)}">Palabras clave...</small>
+                                            </div>
                                         </div>
-                                        <div class="categoria-details">
-                                            <h6 th:text="${categoria.nombre}">Nombre</h6>
-                                            <small th:text="${#strings.abbreviate(categoria.palabrasClave, 50)}">Palabras clave...</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-level">
+                                            Nivel <span th:text="${categoria.nivel}">1</span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${categoria.categoriaPadreNombre != null}" 
+                                              th:text="${categoria.categoriaPadreNombre}">
+                                            Padre
+                                        </span>
+                                        <span th:if="${categoria.categoriaPadreNombre == null}" 
+                                              class="text-muted">
+                                            <i class="fas fa-minus"></i> Raíz
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${categoria.cantidadProductos ?: 0}">0</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${categoria.cantidadSubcategorias ?: 0}">0</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${categoria.activa}" class="badge bg-success">
+                                            <i class="fas fa-check"></i> Activa
+                                        </span>
+                                        <span th:unless="${categoria.activa}" class="badge bg-secondary">
+                                            <i class="fas fa-times"></i> Inactiva
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/categorias/detalle/{id}(id=${categoria.id})}" 
+                                               class="btn btn-info btn-sm btn-action"
+                                               title="Ver detalle">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            
+                                            <a th:href="@{/categorias/editar/{id}(id=${categoria.id})}" 
+                                               class="btn btn-warning btn-sm btn-action"
+                                               title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            
+                                            <form th:if="${categoria.activa}" 
+                                                  th:action="@{/categorias/desactivar/{id}(id=${categoria.id})}" 
+                                                  method="post"
+                                                  style="display: inline;">
+                                                <button type="submit" 
+                                                        class="btn btn-secondary btn-sm btn-action"
+                                                        title="Desactivar"
+                                                        onclick="return confirm('¿Desactivar esta categoría?')">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <form th:unless="${categoria.activa}" 
+                                                  th:action="@{/categorias/activar/{id}(id=${categoria.id})}" 
+                                                  method="post"
+                                                  style="display: inline;">
+                                                <button type="submit" 
+                                                        class="btn btn-success btn-sm btn-action"
+                                                        title="Activar">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <form th:action="@{/categorias/eliminar/{id}(id=${categoria.id})}" 
+                                                  method="post"
+                                                  style="display: inline;">
+                                                <button type="submit" 
+                                                        class="btn btn-danger btn-sm btn-action"
+                                                        title="Eliminar"
+                                                        onclick="return confirm('⚠️ ¿Estás seguro de eliminar esta categoría?\n\nEsta acción no se puede deshacer y afectará todos los productos asociados.')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge badge-level">
-                                        Nivel <span th:text="${categoria.nivel}">1</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span th:if="${categoria.categoriaPadreNombre != null}" 
-                                          th:text="${categoria.categoriaPadreNombre}">
-                                        Padre
-                                    </span>
-                                    <span th:if="${categoria.categoriaPadreNombre == null}" 
-                                          class="text-muted">
-                                        <i class="fas fa-minus"></i> Raíz
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-info" th:text="${categoria.cantidadProductos ?: 0}">0</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary" th:text="${categoria.cantidadSubcategorias ?: 0}">0</span>
-                                </td>
-                                <td>
-                                    <span th:if="${categoria.activa}" class="badge bg-success">
-                                        <i class="fas fa-check"></i> Activa
-                                    </span>
-                                    <span th:unless="${categoria.activa}" class="badge bg-secondary">
-                                        <i class="fas fa-times"></i> Inactiva
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <!-- Ver Detalle -->
-                                        <a th:href="@{/categorias/detalle/{id}(id=${categoria.id})}" 
-                                           class="btn btn-info btn-sm btn-action"
-                                           title="Ver detalle">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        
-                                        <!-- Editar -->
-                                        <a th:href="@{/categorias/editar/{id}(id=${categoria.id})}" 
-                                           class="btn btn-warning btn-sm btn-action"
-                                           title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        
-                                        <!-- Activar/Desactivar -->
-                                        <form th:if="${categoria.activa}" 
-                                              th:action="@{/categorias/desactivar/{id}(id=${categoria.id})}" 
-                                              method="post"
-                                              style="display: inline;">
-                                            <button type="submit" 
-                                                    class="btn btn-secondary btn-sm btn-action"
-                                                    title="Desactivar"
-                                                    onclick="return confirm('¿Desactivar esta categoría?')">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                        </form>
-                                        
-                                        <form th:unless="${categoria.activa}" 
-                                              th:action="@{/categorias/activar/{id}(id=${categoria.id})}" 
-                                              method="post"
-                                              style="display: inline;">
-                                            <button type="submit" 
-                                                    class="btn btn-success btn-sm btn-action"
-                                                    title="Activar">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                        </form>
-                                        
-                                        <!-- Eliminar -->
-                                        <form th:action="@{/categorias/eliminar/{id}(id=${categoria.id})}" 
-                                              method="post"
-                                              style="display: inline;">
-                                            <button type="submit" 
-                                                    class="btn btn-danger btn-sm btn-action"
-                                                    title="Eliminar"
-                                                    onclick="return confirm('¿Estás seguro de eliminar esta categoría? Esta acción no se puede deshacer.')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- Info Card -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Información sobre Categorías</h6>
-                        <p class="mb-0">
-                            Las categorías organizan los productos de forma jerárquica. Puedes crear categorías principales 
-                            (nivel 1) y subcategorías (niveles 2-5). Las palabras clave de cada categoría se utilizan para 
-                            la clasificación automática de productos en los tickets de viáticos.
-                        </p>
-                    </div>
-                </div>
+            <!-- Info Box -->
+            <div class="info-box">
+                <h6>
+                    <i class="fas fa-info-circle"></i>
+                    Información sobre Categorías
+                </h6>
+                <p>
+                    Las categorías organizan los productos de forma jerárquica (hasta 5 niveles). Las palabras clave de cada 
+                    categoría se utilizan para la clasificación automática mediante análisis semántico. El sistema de IA 
+                    aprende de estas palabras clave para categorizar nuevos productos de manera inteligente.
+                </p>
             </div>
         </div>
     </div>
@@ -667,33 +1101,46 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
-        // Sidebar Toggle for Mobile
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-
-        // Initialize DataTable
         $(document).ready(function() {
-            $('#categoriasTable').DataTable({
+            // Initialize DataTable
+            const table = $('#categoriasTable').DataTable({
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
                 },
                 order: [[0, 'asc']],
                 pageLength: 10,
                 responsive: true,
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip'
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6">>rtip'
             });
 
             // Custom search
             $('#searchInput').on('keyup', function() {
-                $('#categoriasTable').DataTable().search(this.value).draw();
+                table.search(this.value).draw();
             });
-        });
 
-        // Auto-hide alerts
-        setTimeout(function() {
-            $('.alert').fadeOut('slow');
-        }, 5000);
+            // Sidebar Toggle
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function(e) {
+                const sidebar = $('.sidebar');
+                const toggle = $('#sidebarToggle');
+                
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && 
+                        !toggle.is(e.target) && toggle.has(e.target).length === 0) {
+                        sidebar.removeClass('active');
+                    }
+                }
+            });
+
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
     </script>
 </body>
 </html>

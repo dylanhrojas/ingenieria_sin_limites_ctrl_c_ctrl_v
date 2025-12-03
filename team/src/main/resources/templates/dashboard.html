@@ -694,11 +694,7 @@
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </a>
-            <a th:href="@{/busqueda-semantica}">
-                <i class="fas fa-search"></i>
-                <span>Búsqueda Semántica</span>
-            </a>
-
+            
             <div class="menu-label">Gestión</div>
             <a th:href="@{/tickets/subir}">
                 <i class="fas fa-upload"></i>
@@ -730,14 +726,10 @@
                 <i class="fas fa-cog"></i>
                 <span>Configuración</span>
             </a>
-        </div>
-
-        <div class="sidebar-footer">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn w-100">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </div>
 
@@ -779,7 +771,7 @@
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form th:action="@{/logout}" method="post" class="px-2">
+                            <form th:action="@{/logout}" method="post">
                                 <button type="submit" class="dropdown-item text-danger">
                                     <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </button>

@@ -1,143 +1,861 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo}">Producto</title>
+    <title th:text="${titulo}">Producto - Conector Semántico OneCard</title>
     
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    
     <style>
-        body { background: #f8f9fa; }
-        .form-card {
-            max-width: 700px;
-            margin: 30px auto;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header .logo {
+            width: 60px;
+            height: 60px;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .sidebar-header small {
+            opacity: 0.8;
+            font-size: 0.85rem;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 70%;
+            background: white;
+            border-radius: 0 5px 5px 0;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active::before {
+            width: 4px;
+        }
+
+        .sidebar-menu a i {
+            width: 30px;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu .menu-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 20px 10px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer .btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer .btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--light-color);
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        /* Form Card */
+        .form-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: 0;
+            border: 1px solid rgba(0,0,0,0.04);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 35px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .form-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.95;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-body {
             padding: 40px;
         }
-        .form-header {
-            border-bottom: 3px solid #2563eb;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .required::after { content: " *"; color: red; }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 14px 18px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .form-control-lg {
+            padding: 16px 20px;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .form-select-lg {
+            padding: 16px 20px;
+            font-size: 1.05rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .input-group-text {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+            border: 2px solid #e2e8f0;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.1));
+        }
+
+        .form-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .form-text i {
+            color: var(--info-color);
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 18px 22px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.1));
+            color: #1e40af;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .alert h6 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-lg {
+            padding: 16px 36px;
+            font-size: 1.05rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            box-shadow: 0 2px 10px rgba(100, 116, 139, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 116, 139, 0.3);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(118, 75, 162, 0.08));
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .info-box h6 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--dark-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .info-box h6 i {
+            color: var(--info-color);
+            font-size: 1.3rem;
+        }
+
+        .info-box p {
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+
+            .form-header {
+                padding: 25px 25px;
+            }
+
+            .form-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-body {
+                padding: 25px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Select2 Custom */
+        .select2-container--bootstrap-5 .select2-selection {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-height: 52px;
+            padding: 4px;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="form-card">
-            <!-- Header -->
-            <div class="form-header">
-                <h2><i class="fas fa-box"></i> <span th:text="${titulo}">Nuevo Producto</span></h2>
-                <p class="text-muted mb-0">Solo los campos esenciales para clasificación</p>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <h3>Conector Semántico</h3>
+            <small>OneCard System</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-label">Principal</div>
+            <a th:href="@{/dashboard}">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-label">Gestión</div>
+            <a th:href="@{/tickets/subir}">
+                <i class="fas fa-upload"></i>
+                <span>Subir Ticket</span>
+            </a>
+            <a th:href="@{/tickets/lista}">
+                <i class="fas fa-receipt"></i>
+                <span>Lista de Tickets</span>
+            </a>
+            <a th:href="@{/productos}" class="active">
+                <i class="fas fa-box"></i>
+                <span>Productos</span>
+            </a>
+            <a th:href="@{/categorias}">
+                <i class="fas fa-tags"></i>
+                <span>Categorías</span>
+            </a>
+            
+            <div class="menu-label">Sistema</div>
+            <a th:href="@{/usuarios}">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </a>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/productos}">Productos</a></li>
+                        <li class="breadcrumb-item active" th:text="${titulo}">Nuevo Producto</li>
+                    </ol>
+                </nav>
             </div>
 
-            <!-- Mensajes -->
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                <i class="fas fa-exclamation-circle"></i>
-                <span th:text="${error}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-
-            <!-- Formulario SIMPLIFICADO -->
-            <form th:action="@{/productos/guardar}" method="post" th:object="${producto}">
-                <input type="hidden" th:field="*{id}" />
-                <input type="hidden" th:field="*{activo}" />
-
-                <!-- Nombre del Producto -->
-                <div class="mb-4">
-                    <label for="nombre" class="form-label required">Descripción del Producto</label>
-                    <input type="text" 
-                           class="form-control form-control-lg" 
-                           id="nombre" 
-                           th:field="*{nombre}"
-                           placeholder="Ej: AGUA NATURAL BONAFONT 1 LT BOTELLA"
-                           required
-                           autofocus>
-                    <small class="form-text text-muted">
-                        <i class="fas fa-info-circle"></i> 
-                        Descripción exacta como aparece en el ticket
-                    </small>
-                </div>
-
-                <!-- Marca (Opcional) -->
-                <div class="mb-4">
-                    <label for="marca" class="form-label">Marca</label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="marca" 
-                           th:field="*{marca}"
-                           placeholder="Ej: Bonafont">
-                    <small class="form-text text-muted">Opcional</small>
-                </div>
-
-                <!-- Categoría -->
-                <div class="mb-4">
-                    <label for="categoria" class="form-label required">Categoría</label>
-                    <select class="form-select form-select-lg" 
-                            id="categoria" 
-                            th:field="*{categoria.id}"
-                            required>
-                        <option value="">-- Seleccionar Categoría --</option>
-                        <option th:each="cat : ${categorias}" 
-                                th:value="${cat.id}" 
-                                th:text="${cat.nombre}">
-                            Categoría
-                        </option>
-                    </select>
-                    <small class="form-text text-muted">
-                        <i class="fas fa-lightbulb"></i> 
-                        Esta categoría se usará para clasificar automáticamente futuros productos similares
-                    </small>
-                </div>
-
-                <!-- Precio Referencia (Opcional) -->
-                <div class="mb-4">
-                    <label for="precioReferencia" class="form-label">Precio de Referencia</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text">$</span>
-                        <input type="number" 
-                               class="form-control" 
-                               id="precioReferencia" 
-                               th:field="*{precioReferencia}"
-                               step="0.01"
-                               min="0"
-                               placeholder="0.00">
-                    </div>
-                    <small class="form-text text-muted">
-                        Opcional - Para validar precios razonables en viáticos
-                    </small>
-                </div>
-
-                <!-- Botones -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-5">
-                    <a th:href="@{/productos}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-arrow-left"></i> Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-save"></i> Guardar Producto
+            <div class="user-menu">
+                <div class="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-3" data-bs-toggle="dropdown">
+                        <div class="text-end d-none d-md-block">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Bienvenido</small>
+                            <strong sec:authentication="name" style="font-size: 0.9rem;">Usuario</strong>
+                        </div>
+                        <div class="user-avatar">
+                            <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                        </div>
                     </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
-            </form>
+            </div>
+        </nav>
 
-            <!-- Info adicional -->
-            <div class="alert alert-info mt-4" role="alert">
-                <h6><i class="fas fa-robot"></i> <strong>Clasificación Automática</strong></h6>
-                <p class="mb-0 small">
-                    Una vez guardado, el sistema Python podrá usar este producto como referencia 
-                    para clasificar automáticamente productos similares en los viáticos.
-                </p>
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="form-card">
+                <!-- Header -->
+                <div class="form-header">
+                    <h2>
+                        <i class="fas fa-box"></i>
+                        <span th:text="${titulo}">Nuevo Producto</span>
+                    </h2>
+                    <p>Registra productos para entrenar el sistema de clasificación semántica</p>
+                </div>
+
+                <!-- Form Body -->
+                <div class="form-body">
+                    <!-- Mensajes de Error -->
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:text="${error}">Error</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form th:action="@{/productos/guardar}" method="post" th:object="${producto}" id="productoForm">
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{activo}" />
+
+                        <!-- Nombre del Producto -->
+                        <div class="form-group">
+                            <label for="nombre" class="form-label required">
+                                <i class="fas fa-tag"></i>
+                                Descripción del Producto
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="nombre" 
+                                   th:field="*{nombre}"
+                                   placeholder="Ej: AGUA NATURAL BONAFONT 1 LT BOTELLA"
+                                   required
+                                   autofocus>
+                            <small class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Descripción exacta como aparece en el ticket para mejor precisión
+                            </small>
+                        </div>
+
+                        <!-- Marca -->
+                        <div class="form-group">
+                            <label for="marca" class="form-label">
+                                <i class="fas fa-copyright"></i>
+                                Marca
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="marca" 
+                                   th:field="*{marca}"
+                                   placeholder="Ej: Bonafont">
+                            <small class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Opcional - Ayuda a mejorar la precisión de clasificación
+                            </small>
+                        </div>
+
+                        <!-- Categoría -->
+                        <div class="form-group">
+                            <label for="categoria" class="form-label required">
+                                <i class="fas fa-layer-group"></i>
+                                Categoría
+                            </label>
+                            <select class="form-select form-select-lg" 
+                                    id="categoria" 
+                                    th:field="*{categoria.id}"
+                                    required>
+                                <option value="">-- Seleccionar Categoría --</option>
+                                <option th:each="cat : ${categorias}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.nombre}">
+                                    Categoría
+                                </option>
+                            </select>
+                            <small class="form-text">
+                                <i class="fas fa-brain"></i> 
+                                Esta categoría se usará para clasificar automáticamente productos similares
+                            </small>
+                        </div>
+
+                        <!-- Precio Referencia -->
+                        <div class="form-group">
+                            <label for="precioReferencia" class="form-label">
+                                <i class="fas fa-dollar-sign"></i>
+                                Precio de Referencia
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">$</span>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="precioReferencia" 
+                                       th:field="*{precioReferencia}"
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00">
+                            </div>
+                            <small class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Opcional - Útil para detectar anomalías en precios de viáticos
+                            </small>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex gap-3 justify-content-between mt-5">
+                            <a th:href="@{/productos}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left"></i>
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-save"></i>
+                                Guardar Producto
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Info Box -->
+                    <div class="info-box">
+                        <h6>
+                            <i class="fas fa-robot"></i>
+                            <strong>Sistema de Clasificación Inteligente</strong>
+                        </h6>
+                        <p>
+                            Una vez guardado, este producto se integrará al modelo de clasificación semántica. 
+                            El sistema Python utilizará esta información para identificar y categorizar automáticamente 
+                            productos similares en futuros tickets, ahorrando tiempo y mejorando la precisión del análisis de gastos.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize Select2
+            $('#categoria').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Seleccionar Categoría --',
+                allowClear: false
+            });
+
+            // Sidebar Toggle
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function(e) {
+                const sidebar = $('.sidebar');
+                const toggle = $('#sidebarToggle');
+                
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && 
+                        !toggle.is(e.target) && toggle.has(e.target).length === 0) {
+                        sidebar.removeClass('active');
+                    }
+                }
+            });
+
+            // Form validation
+            $('#productoForm').on('submit', function(e) {
+                const nombre = $('#nombre').val().trim();
+                const categoria = $('#categoria').val();
+
+                if (!nombre) {
+                    e.preventDefault();
+                    alert('⚠️ Debes ingresar una descripción del producto');
+                    $('#nombre').focus();
+                    return false;
+                }
+
+                if (!categoria) {
+                    e.preventDefault();
+                    alert('⚠️ Debes seleccionar una categoría');
+                    $('#categoria').focus();
+                    return false;
+                }
+
+                // Disable submit button
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
 </body>
 </html>
