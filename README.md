@@ -277,7 +277,14 @@ ingenieria_sin_limites_ctrl_c_ctrl_v/
 
 ## 👥 Equipo de Desarrollo
 
-**Ingeniería Sin Límites (Ctrl+C Ctrl+V)**
+- IGT - Juan José Rodríguez Contreras -1220197 
+- ISC - Dylan Hernández Rojas - 1220143
+- IET - Silemi Fragoso Olvera - 1210219
+- ISC - Ana Laura Vidal López - 1180888
+- ISC - José David García Verdugo - 1230362
+- IIS- Wilken Alexander Núñez Orellana - 1230133
+- IIS - Javier Alexis Aguirre Vasquez - 1240350
+- ISC - Geisler Jiménez Torres - 1230572
 
 ---
 
