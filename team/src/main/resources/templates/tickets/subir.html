@@ -672,17 +672,17 @@
                                        placeholder="0.00">
                             </div>
                             <div class="col-12 mb-3">
-                                <label class="form-label" for="categoria_${productoIndex}">Categoría (Opcional)</label>
-                                <select class="form-select categoria-select" 
-                                        id="categoria_${productoIndex}"
-                                        name="productos[${productoIndex}].categoriaId">
-                                    <option value="">-- Sin categoría --</option>
-                                    <option th:each="cat : \${categorias}" 
-                                            th:value="\${cat.id}" 
-                                            th:text="\${cat.nombre}">
-                                        Categoría
-                                    </option>
-                                </select>
+                                <label class="form-label">
+                                    <i class="fas fa-robot"></i> Categoría Sugerida por IA
+                                </label>
+                                <div class="categoria-sugerida-container" id="categoriaSugerida_${productoIndex}">
+                                    <div class="alert alert-secondary mb-0" style="font-size: 0.9rem;">
+                                        <i class="fas fa-search"></i> Escribe el nombre del producto para obtener sugerencia automática...
+                                    </div>
+                                </div>
+                                <input type="hidden"
+                                       id="categoriaId_${productoIndex}"
+                                       name="productos[${productoIndex}].categoriaId">
                             </div>
                             <div class="col-12">
                                 <div class="alert alert-light mb-0">
@@ -694,14 +694,7 @@
                 `;
                 
                 $('#productosContainer').append(html);
-                
-                // Initialize Select2 for the new category select
-                $(`.producto-row[data-index="${productoIndex}"] .categoria-select`).select2({
-                    theme: 'bootstrap-5',
-                    placeholder: '-- Sin categoría --',
-                    allowClear: true
-                });
-                
+
                 productoIndex++;
                 calcularTotal();
             }
@@ -711,6 +704,94 @@
                 $(`.producto-row[data-index="${index}"]`).remove();
                 calcularTotal();
             };
+
+            // Buscar categoría con IA cuando se escribe el nombre del producto
+            let searchTimeout;
+            $(document).on('input', 'input[id^="nombreProducto_"]', function() {
+                const input = $(this);
+                const nombreProducto = input.val().trim();
+                const index = input.closest('.producto-row').data('index');
+
+                // Limpiar timeout anterior
+                clearTimeout(searchTimeout);
+
+                if (nombreProducto.length < 3) {
+                    $(`#categoriaSugerida_${index}`).html(`
+                        <div class="alert alert-secondary mb-0" style="font-size: 0.9rem;">
+                            <i class="fas fa-search"></i> Escribe al menos 3 caracteres para buscar...
+                        </div>
+                    `);
+                    return;
+                }
+
+                // Mostrar loading
+                $(`#categoriaSugerida_${index}`).html(`
+                    <div class="alert alert-info mb-0" style="font-size: 0.9rem;">
+                        <i class="fas fa-spinner fa-spin"></i> Buscando categoría sugerida...
+                    </div>
+                `);
+
+                // Esperar 500ms antes de hacer la búsqueda (debounce)
+                searchTimeout = setTimeout(() => {
+                    buscarCategoriaSugerida(nombreProducto, index);
+                }, 500);
+            });
+
+            // Función para buscar categoría en la API de Python
+            function buscarCategoriaSugerida(nombreProducto, index) {
+                $.ajax({
+                    url: `http://localhost:5000/api/predict-category?q=${encodeURIComponent(nombreProducto)}`,
+                    method: 'GET',
+                    timeout: 5000,
+                    success: function(data) {
+                        if (data.prediccion && data.prediccion.categoria_nombre) {
+                            const categoria = data.prediccion;
+                            const confianza = categoria.score > 0
+                                ? Math.round((categoria.score / Math.max(...data.todas_categorias.map(c => c.score)) * 100))
+                                : 0;
+
+                            const esAproximada = confianza === 0;
+
+                            // Mostrar categoría sugerida
+                            $(`#categoriaSugerida_${index}`).html(`
+                                <div class="alert alert-success mb-0" style="font-size: 0.9rem;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-${esAproximada ? 'lightbulb' : 'check-circle'}"></i>
+                                            <strong>${categoria.categoria_nombre}</strong>
+                                            ${esAproximada
+                                                ? '<span class="badge bg-secondary ms-2">Sugerencia</span>'
+                                                : `<span class="badge bg-success ms-2">${confianza}% confianza</span>`
+                                            }
+                                        </div>
+                                    </div>
+                                    ${esAproximada
+                                        ? '<small class="text-muted d-block mt-1">No se encontró coincidencia exacta, esta es una sugerencia aproximada</small>'
+                                        : `<small class="text-muted d-block mt-1">${categoria.count} productos similares encontrados</small>`
+                                    }
+                                </div>
+                            `);
+
+                            // Guardar categoria_id en el campo hidden
+                            $(`#categoriaId_${index}`).val(categoria.categoria_id);
+                        } else {
+                            mostrarErrorCategoria(index, 'No se pudo determinar una categoría');
+                        }
+                    },
+                    error: function() {
+                        mostrarErrorCategoria(index, 'Error al conectar con el servicio de IA');
+                    }
+                });
+            }
+
+            function mostrarErrorCategoria(index, mensaje) {
+                $(`#categoriaSugerida_${index}`).html(`
+                    <div class="alert alert-warning mb-0" style="font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle"></i> ${mensaje}
+                    </div>
+                `);
+                $(`#categoriaId_${index}`).val('');
+            }
 
             // Calcular Total
             $(document).on('input', '.cantidad-input, .precio-input, .descuento-input', function() {

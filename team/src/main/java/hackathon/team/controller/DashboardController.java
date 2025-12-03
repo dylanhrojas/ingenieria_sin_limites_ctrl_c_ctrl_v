@@ -28,6 +28,15 @@ public class DashboardController {
     private final CategoriaRepository categoriaRepository;
 
     /**
+     * Página de búsqueda semántica
+     */
+    @GetMapping("/busqueda-semantica")
+    public String busquedaSemantica() {
+        log.info("Accediendo a búsqueda semántica");
+        return "busqueda-semantica";
+    }
+
+    /**
      * Mostrar dashboard principal con estadísticas reales
      */
     @GetMapping({"/", "/dashboard"})
