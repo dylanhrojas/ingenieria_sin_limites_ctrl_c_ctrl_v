@@ -95,7 +95,21 @@ cd ingenieria_sin_limites_ctrl_c_ctrl_v
 CREATE DATABASE "conector-semantico";
 ```
 
-2. Configurar credenciales en `team/src/main/resources/application.properties`:
+2. Poblar la base de datos con el script SQL incluido:
+```bash
+# Opción 1: Desde línea de comandos
+psql -U postgres -d conector-semantico -f bd-sistema.sql
+
+# Opción 2: Desde pgAdmin
+# - Abrir pgAdmin
+# - Conectar a la base de datos "conector-semantico"
+# - Ir a Tools > Query Tool
+# - Abrir el archivo bd-sistema.sql y ejecutarlo
+```
+
+**Nota:** El archivo [bd-sistema.sql](bd-sistema.sql) contiene todas las tablas, datos de prueba y configuraciones necesarias para que el sistema funcione correctamente.
+
+3. Configurar credenciales en `team/src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/conector-semantico
 spring.datasource.username=postgres
