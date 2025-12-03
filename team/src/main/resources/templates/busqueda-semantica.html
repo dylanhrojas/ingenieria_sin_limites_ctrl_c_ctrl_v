@@ -37,7 +37,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar (Mismo estilo que dashboard) */
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -50,6 +50,19 @@
             transition: all 0.3s ease;
             z-index: 1000;
             box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
         }
 
         .sidebar-header {
@@ -80,6 +93,11 @@
             line-height: 1.3;
         }
 
+        .sidebar-header small {
+            opacity: 0.8;
+            font-size: 0.85rem;
+        }
+
         .sidebar-menu {
             padding: 20px 0;
         }
@@ -96,11 +114,28 @@
             border-radius: 10px;
         }
 
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 70%;
+            background: white;
+            border-radius: 0 5px 5px 0;
+            transition: width 0.3s ease;
+        }
+
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
             background: rgba(255,255,255,0.15);
             color: white;
             transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active::before {
+            width: 4px;
         }
 
         .sidebar-menu a i {
@@ -116,6 +151,27 @@
             letter-spacing: 1px;
             padding: 20px 20px 10px;
             color: rgba(255,255,255,0.6);
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer .btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer .btn:hover {
+            background: white;
+            color: var(--primary-color);
         }
 
         /* Main Content */
@@ -137,6 +193,17 @@
             z-index: 100;
         }
 
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
         .user-avatar {
             width: 45px;
             height: 45px;
@@ -151,82 +218,166 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        /* Search Section */
-        .search-section {
-            padding: 40px 30px;
+        /* Search Hero Section */
+        .search-hero {
+            padding: 60px 30px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            position: relative;
+            overflow: hidden;
         }
 
-        .search-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        .search-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
         }
 
-        .search-section p {
-            font-size: 1.1rem;
-            opacity: 0.95;
-            margin-bottom: 30px;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
         }
 
-        .search-box {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        .search-hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
-        .search-input-wrapper {
+        .search-hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
             display: flex;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .search-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .search-box-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 15px;
+            align-items: stretch;
         }
 
         .search-input {
             flex: 1;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            transition: border-color 0.3s;
+            padding: 18px 25px;
+            font-size: 1.15rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
         }
 
         .search-button {
-            padding: 15px 40px;
-            font-size: 1.1rem;
+            padding: 18px 45px;
+            font-size: 1.15rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         .search-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .search-button:active {
+            transform: translateY(-1px);
+        }
+
+        .search-examples {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .search-examples small {
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .example-query {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: #1e40af;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .example-query:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         /* Results Section */
         .results-container {
-            padding: 30px;
+            padding: 40px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .results-grid {
             display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 25px;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
         }
 
-        @media (max-width: 992px) {
+        @media (max-width: 1200px) {
             .results-grid {
                 grid-template-columns: 1fr;
             }
@@ -235,113 +386,189 @@
         .result-card {
             background: white;
             border-radius: 20px;
-            padding: 30px;
+            padding: 35px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             border: 1px solid rgba(0,0,0,0.04);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .result-card h2 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
         }
 
+        .result-card h2 i {
+            color: var(--primary-color);
+        }
+
+        /* Predicted Category */
         .predicted-category {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predicted-category::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .predicted-category h3 {
-            font-size: 1.4rem;
-            margin-bottom: 15px;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
         }
 
         .category-score {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-bar-container {
+            flex: 1;
+            margin: 0 20px;
         }
 
         .score-bar {
-            flex: 1;
-            height: 10px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 5px;
-            margin: 0 15px;
+            height: 12px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .score-fill {
             height: 100%;
             background: white;
-            transition: width 0.5s ease;
-            border-radius: 5px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
+        .category-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Other Categories */
         .other-category {
-            padding: 15px;
-            margin-bottom: 12px;
-            background: #f8fafc;
-            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8));
+            border-radius: 15px;
             border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .other-category:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
         .other-category h4 {
             color: var(--dark-color);
-            margin-bottom: 8px;
-            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
         }
 
+        .other-category-score {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Product Card */
         .product-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
+            background: white;
         }
 
         .product-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
             border-color: var(--primary-color);
         }
 
         .product-header {
             display: flex;
             justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 15px;
         }
 
         .product-name {
-            font-size: 1.15rem;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 700;
             color: var(--dark-color);
             flex: 1;
+            line-height: 1.4;
         }
 
         .similarity-badge {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 6px 14px;
+            padding: 8px 18px;
             border-radius: 20px;
             font-size: 0.9rem;
-            font-weight: bold;
-            margin-left: 15px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .product-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+            gap: 20px;
         }
 
         .detail-item {
@@ -350,33 +577,38 @@
 
         .detail-label {
             color: #64748b;
-            font-weight: 500;
-            margin-bottom: 3px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
             color: var(--dark-color);
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.05rem;
         }
 
         .price {
             color: var(--success-color);
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
+        /* Loading */
         .loading-spinner {
             text-align: center;
-            padding: 60px;
+            padding: 80px 20px;
         }
 
         .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid var(--primary-color);
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f4f6;
+            border-top: 5px solid var(--primary-color);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
         }
 
         @keyframes spin {
@@ -384,39 +616,126 @@
             100% { transform: rotate(360deg); }
         }
 
-        .alert-custom {
-            border-radius: 12px;
-            padding: 20px;
-            border: none;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
+        .loading-spinner h5 {
             color: #64748b;
+            font-weight: 600;
         }
 
-        .no-results i {
-            font-size: 4rem;
-            color: #cbd5e1;
+        /* Alerts */
+        .alert-custom {
+            border-radius: 15px;
+            padding: 25px;
+            border: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
+            border-left: 4px solid var(--danger-color);
+            color: #991b1b;
+        }
+
+        .alert-info-custom {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid var(--info-color);
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 20px;
         }
 
+        .alert-info-custom h6 {
+            color: #1e40af;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .alert-info-custom p {
+            color: #1e40af;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .empty-state h4 {
+            color: var(--dark-color);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
             }
 
             .main-content {
                 margin-left: 0;
             }
 
-            .search-section h1 {
-                font-size: 2rem;
+            .search-hero {
+                padding: 40px 20px;
             }
 
-            .search-input-wrapper {
+            .search-hero h1 {
+                font-size: 2rem;
                 flex-direction: column;
+            }
+
+            .search-hero p {
+                font-size: 1.1rem;
+            }
+
+            .search-input-group {
+                flex-direction: column;
+            }
+
+            .search-button {
+                padding: 15px 30px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-card {
+                padding: 25px;
+            }
+
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .similarity-badge {
+                align-self: flex-start;
             }
         }
     </style>
@@ -439,7 +758,7 @@
                 <span>Dashboard</span>
             </a>
             <a th:href="@{/busqueda-semantica}" class="active">
-                <i class="fas fa-search"></i>
+                <i class="fas fa-brain"></i>
                 <span>Búsqueda Semántica</span>
             </a>
 
@@ -460,6 +779,10 @@
                 <i class="fas fa-tags"></i>
                 <span>Categorías</span>
             </a>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </div>
 
@@ -467,7 +790,10 @@
     <div class="main-content">
         <!-- Top Navbar -->
         <nav class="top-navbar">
-            <div>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
@@ -487,8 +813,11 @@
                     </div>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Mi Perfil</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form th:action="@{/logout}" method="post" class="px-2">
+                        <form th:action="@{/logout}" method="post">
                             <button type="submit" class="dropdown-item text-danger">
                                 <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                             </button>
@@ -498,24 +827,36 @@
             </div>
         </nav>
 
-        <!-- Search Section -->
-        <div class="search-section">
-            <div class="container-fluid">
-                <h1><i class="fas fa-brain"></i> Búsqueda Semántica de Productos</h1>
-                <p>Encuentra productos similares y descubre su categoría usando Inteligencia Artificial</p>
+        <!-- Search Hero Section -->
+        <div class="search-hero">
+            <div class="search-hero-content">
+                <h1>
+                    <i class="fas fa-brain"></i>
+                    Búsqueda Semántica IA
+                </h1>
+                <p>Encuentra productos similares y descubre categorías usando Inteligencia Artificial</p>
 
-                <div class="search-box">
-                    <div class="search-input-wrapper">
+                <div class="search-box-container">
+                    <div class="search-input-group">
                         <input
                             type="text"
                             id="searchInput"
                             class="search-input"
-                            placeholder="Busca un producto... (ej: coca cola, galletas, pan, refresco)"
+                            placeholder="¿Qué producto estás buscando?"
                             autocomplete="off"
                         >
                         <button onclick="search()" class="search-button">
                             <i class="fas fa-search me-2"></i> Buscar
                         </button>
+                    </div>
+
+                    <div class="search-examples">
+                        <small><i class="fas fa-lightbulb me-2"></i>Prueba con:</small>
+                        <span class="example-query" onclick="searchExample('coca cola')">coca cola</span>
+                        <span class="example-query" onclick="searchExample('galletas')">galletas</span>
+                        <span class="example-query" onclick="searchExample('pan')">pan</span>
+                        <span class="example-query" onclick="searchExample('agua')">agua</span>
+                        <span class="example-query" onclick="searchExample('café')">café</span>
                     </div>
                 </div>
             </div>
@@ -524,7 +865,8 @@
         <!-- Loading -->
         <div id="loading" class="loading-spinner" style="display: none;">
             <div class="spinner"></div>
-            <h5 class="text-muted">Buscando productos similares...</h5>
+            <h5>Analizando con IA...</h5>
+            <p class="text-muted">Buscando productos similares en nuestra base de datos</p>
         </div>
 
         <!-- Error -->
@@ -556,10 +898,10 @@
         <!-- Empty State -->
         <div id="emptyState" class="results-container">
             <div class="result-card">
-                <div class="no-results">
+                <div class="empty-state">
                     <i class="fas fa-search"></i>
-                    <h4>Busca productos en nuestro catálogo</h4>
-                    <p>Escribe el nombre de un producto para encontrar similares y descubrir su categoría</p>
+                    <h4>Descubre productos en nuestro catálogo</h4>
+                    <p>Escribe el nombre de un producto para encontrar similares y su categoría automáticamente</p>
                 </div>
             </div>
         </div>
@@ -571,18 +913,29 @@
     <script>
         const API_URL = 'http://localhost:5000';
 
-        // Permitir búsqueda con Enter
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Buscar con Enter
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 search();
             }
         });
 
+        // Buscar ejemplo
+        function searchExample(query) {
+            document.getElementById('searchInput').value = query;
+            search();
+        }
+
         async function search() {
             const query = document.getElementById('searchInput').value.trim();
 
             if (!query) {
-                alert('Por favor ingresa un término de búsqueda');
+                alert('⚠️ Por favor ingresa un término de búsqueda');
                 return;
             }
 
@@ -610,38 +963,36 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorMessage').textContent =
-                    'Error al realizar la búsqueda. Asegúrate de que la API de Python esté corriendo en ' + API_URL;
+                document.getElementById('errorMessage').innerHTML = `
+                    <strong>Error de conexión</strong><br>
+                    No se pudo conectar con el servicio de IA. Asegúrate de que la API de Python esté corriendo en <code>${API_URL}</code>
+                `;
                 document.getElementById('error').style.display = 'block';
             }
         }
 
         function displayResults(data) {
-            // Mostrar categoría predicha
+            // Categoría predicha
             if (data.categoria_predicha) {
                 const maxScore = Math.max(...data.categorias_sugeridas.map(c => c.score));
-
-                // Evitar NaN cuando maxScore = 0 (fallback)
-                const percentage = maxScore > 0
-                    ? (data.categoria_predicha.score / maxScore * 100).toFixed(0)
-                    : 0;
-
-                // Detectar si es fallback (score = 0)
+                const percentage = maxScore > 0 ? (data.categoria_predicha.score / maxScore * 100).toFixed(0) : 0;
                 const isFallback = maxScore === 0;
 
                 document.getElementById('categoryPrediction').innerHTML = `
                     <div class="predicted-category">
                         <h3>${data.categoria_predicha.categoria_nombre}</h3>
                         <div class="category-score">
-                            <span><strong>${isFallback ? 'Sugerencia:' : 'Confianza:'}</strong></span>
-                            <div class="score-bar">
-                                <div class="score-fill" style="width: ${isFallback ? '100' : percentage}%"></div>
+                            <span><strong>${isFallback ? 'Tipo:' : 'Confianza:'}</strong></span>
+                            <div class="score-bar-container">
+                                <div class="score-bar">
+                                    <div class="score-fill" style="width: ${isFallback ? '100' : percentage}%"></div>
+                                </div>
                             </div>
-                            <span><strong>${isFallback ? 'Aproximada' : percentage + '%'}</strong></span>
+                            <span><strong>${isFallback ? 'Sugerencia' : percentage + '%'}</strong></span>
                         </div>
-                        <div style="margin-top: 15px; opacity: 0.95;">
+                        <div class="category-info">
                             <i class="fas fa-${isFallback ? 'lightbulb' : 'check-circle'} me-2"></i>
-                            ${data.categoria_predicha.count} producto${data.categoria_predicha.count !== 1 ? 's' : ''} ${isFallback ? 'sugeridos' : 'similares encontrados'}
+                            ${data.categoria_predicha.count} producto${data.categoria_predicha.count !== 1 ? 's' : ''} ${isFallback ? 'sugeridos en esta categoría' : 'similares encontrados'}
                         </div>
                     </div>
                 `;
@@ -650,72 +1001,54 @@
                 const otherCats = data.categorias_sugeridas.slice(1);
                 if (otherCats.length > 0 && !isFallback) {
                     document.getElementById('otherCategories').innerHTML = `
-                        <h5 style="color: #64748b; margin: 20px 0 15px; font-size: 1rem;">
-                            <i class="fas fa-list-ul me-2"></i>Otras categorías posibles:
+                        <h5 style="color: #64748b; margin: 25px 0 15px; font-size: 1.05rem; font-weight: 600;">
+                            <i class="fas fa-list-ul me-2"></i>Otras categorías posibles
                         </h5>
                         ${otherCats.map(cat => {
-                            const catPercentage = maxScore > 0
-                                ? (cat.score / maxScore * 100).toFixed(0)
-                                : 0;
+                            const catPercentage = maxScore > 0 ? (cat.score / maxScore * 100).toFixed(0) : 0;
                             return `
                                 <div class="other-category">
                                     <h4>${cat.categoria_nombre}</h4>
-                                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
-                                        <div class="score-bar" style="flex: 1;">
-                                            <div class="score-fill" style="width: ${catPercentage}%; background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                                    <div class="other-category-score">
+                                        <div class="score-bar-container">
+                                            <div class="score-bar">
+                                                <div class="score-fill" style="width: ${catPercentage}%; background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                                            </div>
                                         </div>
-                                        <span style="font-weight: 600; color: #64748b;">${catPercentage}%</span>
+                                        <span style="font-weight: 700; color: #64748b; min-width: 50px; text-align: right;">${catPercentage}%</span>
                                     </div>
                                 </div>
                             `;
                         }).join('')}
                     `;
                 } else {
-                    // Limpiar otras categorías si es fallback
                     document.getElementById('otherCategories').innerHTML = '';
                 }
-            } else {
-                document.getElementById('categoryPrediction').innerHTML = `
-                    <div class="no-results">
-                        <i class="fas fa-question-circle"></i>
-                        <p>No se pudo predecir una categoría</p>
-                    </div>
-                `;
             }
 
-            // Mostrar productos
+            // Productos
             if (data.productos_similares && data.productos_similares.length > 0) {
-                // Verificar si son resultados de fallback (sugerencias)
                 const isFallback = data.productos_similares[0].is_fallback || false;
 
                 let productsHTML = '';
 
-                // Agregar mensaje informativo si son sugerencias
                 if (isFallback) {
                     productsHTML = `
-                        <div class="alert alert-info alert-custom mb-3" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-left: 4px solid #0284c7;">
+                        <div class="alert-info-custom">
                             <div style="display: flex; align-items: start; gap: 15px;">
                                 <i class="fas fa-lightbulb" style="font-size: 1.5rem; color: #0284c7; margin-top: 3px;"></i>
                                 <div>
-                                    <h6 style="color: #0c4a6e; margin-bottom: 8px; font-weight: 700;">
-                                        No encontramos coincidencias exactas
-                                    </h6>
-                                    <p style="color: #0c4a6e; margin: 0; font-size: 0.95rem; line-height: 1.5;">
-                                        Te mostramos algunas sugerencias de nuestro catálogo que podrían interesarte.
-                                        Intenta buscar con otros términos o explora estos productos.
-                                    </p>
+                                    <h6>No encontramos coincidencias exactas</h6>
+                                    <p>Te mostramos algunas sugerencias de nuestro catálogo que podrían interesarte.</p>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
 
-                // Agregar productos
                 productsHTML += data.productos_similares.map(product => {
                     const similarity = (product.similarity_score * 100).toFixed(0);
-                    const badgeStyle = isFallback
-                        ? 'background: linear-gradient(135deg, #6b7280, #4b5563);'
-                        : '';
+                    const badgeStyle = isFallback ? 'background: linear-gradient(135deg, #6b7280, #4b5563);' : '';
                     const badgeText = isFallback ? 'Sugerencia' : `${similarity}% similar`;
 
                     return `
@@ -737,7 +1070,7 @@
                                 </div>
                                 ${product.precio_referencia ? `
                                     <div class="detail-item">
-                                        <div class="detail-label"><i class="fas fa-dollar-sign me-1"></i> Precio</div>
+                                        <div class="detail-label"><i class="fas fa-dollar-sign me-1"></i> Precio Ref.</div>
                                         <div class="detail-value price">$${product.precio_referencia.toFixed(2)}</div>
                                     </div>
                                 ` : ''}
@@ -749,14 +1082,14 @@
                 document.getElementById('productsList').innerHTML = productsHTML;
             } else {
                 document.getElementById('productsList').innerHTML = `
-                    <div class="no-results">
+                    <div class="empty-state">
                         <i class="fas fa-inbox"></i>
-                        <p>No se encontraron productos similares</p>
+                        <h4>No se encontraron productos</h4>
+                        <p>Intenta con otros términos de búsqueda</p>
                     </div>
                 `;
             }
 
-            // Mostrar sección de resultados
             document.getElementById('results').style.display = 'block';
         }
     </script>

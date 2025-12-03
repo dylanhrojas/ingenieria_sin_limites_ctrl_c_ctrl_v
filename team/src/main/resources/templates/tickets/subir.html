@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Ticket - Sistema de Viáticos</title>
+    <title>Subir Ticket - Conector Semántico OneCard</title>
     
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
@@ -23,14 +23,22 @@
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
+            --info-color: #3b82f6;
             --dark-color: #1e293b;
             --light-color: #f8fafc;
             --sidebar-width: 260px;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         /* Sidebar */
@@ -45,24 +53,53 @@
             overflow-y: auto;
             transition: all 0.3s ease;
             z-index: 1000;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0;
+            background: rgba(0,0,0,0.1);
         }
 
         .sidebar-header .logo {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .sidebar-header small {
+            opacity: 0.8;
+            font-size: 0.85rem;
         }
 
         .sidebar-menu {
@@ -72,22 +109,52 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: rgba(255,255,255,0.8);
             text-decoration: none;
             transition: all 0.3s ease;
+            position: relative;
+            margin: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 70%;
+            background: white;
+            border-radius: 0 5px 5px 0;
+            transition: width 0.3s ease;
         }
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             color: white;
-            border-left: 4px solid white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active::before {
+            width: 4px;
         }
 
         .sidebar-menu a i {
             width: 30px;
             font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu .menu-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 20px 10px;
+            color: rgba(255,255,255,0.6);
         }
 
         .sidebar-footer {
@@ -96,35 +163,70 @@
             width: 100%;
             padding: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer .btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer .btn:hover {
+            background: white;
+            color: var(--primary-color);
         }
 
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
-            padding: 0;
             min-height: 100vh;
+            background: var(--light-color);
         }
 
         /* Top Navbar */
         .top-navbar {
             background: white;
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         /* Dashboard Content */
@@ -132,152 +234,392 @@
             padding: 30px;
         }
 
+        .page-header {
+            margin-bottom: 35px;
+        }
+
         .page-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1rem;
         }
 
         /* Form Card */
         .form-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .form-card:hover::before {
+            transform: scaleX(1);
         }
 
         .form-card h4 {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--dark-color);
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-color);
+            border-bottom: 2px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-card h4 i {
+            color: var(--primary-color);
         }
 
         .form-label {
             font-weight: 600;
             color: var(--dark-color);
             margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+            margin-right: 5px;
         }
 
         .form-control,
         .form-select {
-            border-radius: 10px;
+            border-radius: 12px;
             border: 2px solid #e2e8f0;
-            padding: 12px 15px;
+            padding: 12px 16px;
             transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
         .form-control:focus,
         .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
         }
 
         /* Image Upload */
         .image-upload-area {
             border: 3px dashed #e2e8f0;
-            border-radius: 15px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 50px 40px;
             text-align: center;
-            background: var(--light-color);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.03), rgba(118, 75, 162, 0.03));
+            transition: all 0.4s ease;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .image-upload-area:hover::before {
+            opacity: 1;
         }
 
         .image-upload-area:hover {
             border-color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.05);
+            background: rgba(37, 99, 235, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
         }
 
         .image-upload-area.dragover {
             border-color: var(--success-color);
-            background: rgba(16, 185, 129, 0.05);
+            background: rgba(16, 185, 129, 0.08);
+            transform: scale(1.02);
+        }
+
+        .image-upload-area i {
+            display: block;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .image-upload-area h5 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .image-upload-area p {
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 1rem;
         }
 
         .image-preview {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 450px;
             margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
 
         /* Producto Row */
         .producto-row {
-            background: var(--light-color);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8));
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             border: 2px solid #e2e8f0;
             position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .producto-row:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 20px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
         }
 
         .producto-row .remove-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .producto-row .remove-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Categoría Sugerida */
+        .categoria-sugerida-container .alert {
+            border-radius: 12px;
+            border: 2px solid;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .categoria-sugerida-container .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-color: var(--success-color);
+            color: #065f46;
+        }
+
+        .categoria-sugerida-container .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border-color: var(--info-color);
+            color: #1e40af;
+        }
+
+        .categoria-sugerida-container .alert-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border-color: var(--warning-color);
+            color: #92400e;
+        }
+
+        .categoria-sugerida-container .alert-secondary {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.1), rgba(100, 116, 139, 0.05));
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .categoria-sugerida-container .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            font-weight: 600;
+            border-radius: 8px;
         }
 
         /* Buttons */
         .btn-primary {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-success {
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            border-radius: 12px;
+            padding: 14px 32px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-            background: var(--secondary-color);
+        .btn-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-success {
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 600;
         }
 
         .btn-danger {
-            border-radius: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
         }
 
         /* Total Display */
         .total-display {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 25px;
-            border-radius: 15px;
+            padding: 30px;
+            border-radius: 20px;
             text-align: center;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .total-display:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .total-display p {
+            margin: 0;
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
         }
 
         .total-display h3 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 10px 0;
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 15px 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Breadcrumb */
-        .breadcrumb-custom {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 20px;
+        /* Alerts */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            padding: 18px 22px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        .breadcrumb-custom .breadcrumb-item a {
-            color: #64748b;
-            text-decoration: none;
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+            color: #1e40af;
+            border-left: 4px solid var(--info-color);
         }
 
-        .breadcrumb-custom .breadcrumb-item.active {
-            color: var(--primary-color);
-            font-weight: 600;
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert i {
+            margin-right: 8px;
         }
 
         /* Responsive */
@@ -297,6 +639,51 @@
             .dashboard-content {
                 padding: 20px;
             }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .image-upload-area {
+                padding: 30px 20px;
+            }
+
+            .total-display h3 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .form-card:nth-child(1) { animation-delay: 0.1s; }
+        .form-card:nth-child(2) { animation-delay: 0.2s; }
+        .form-card:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Loading Spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .fa-spinner.fa-spin {
+            animation: spin 1s linear infinite;
         }
     </style>
 </head>
@@ -305,16 +692,27 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <i class="fas fa-receipt"></i>
+                <i class="fas fa-credit-card"></i>
             </div>
-            <h3>Sistema de Viáticos</h3>
-            <small>OneCard</small>
+            <h3>Conector Semántico</h3>
+            <small>OneCard System</small>
         </div>
 
         <div class="sidebar-menu">
+            <div class="menu-label">Principal</div>
             <a th:href="@{/dashboard}">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-label">Gestión</div>
+            <a th:href="@{/tickets/subir}" class="active">
+                <i class="fas fa-upload"></i>
+                <span>Subir Ticket</span>
+            </a>
+            <a th:href="@{/tickets/lista}">
+                <i class="fas fa-receipt"></i>
+                <span>Lista de Tickets</span>
             </a>
             <a th:href="@{/productos}">
                 <i class="fas fa-box"></i>
@@ -324,15 +722,9 @@
                 <i class="fas fa-tags"></i>
                 <span>Categorías</span>
             </a>
-            <a th:href="@{/tickets/subir}" class="active">
-                <i class="fas fa-upload"></i>
-                <span>Subir Ticket</span>
-            </a>
-            <a th:href="@{/tickets/lista}">
-                <i class="fas fa-receipt"></i>
-                <span>Viáticos</span>
-            </a>
-            <a href="#">
+            
+            <div class="menu-label">Sistema</div>
+            <a th:href="@{/usuarios}">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
             </a>
@@ -340,14 +732,14 @@
                 <i class="fas fa-chart-line"></i>
                 <span>Reportes</span>
             </a>
-        </div>
-
-        <div class="sidebar-footer">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-light w-100">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
+            <a href="#">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </a>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </div>
 
@@ -356,30 +748,36 @@
         <!-- Top Navbar -->
         <nav class="top-navbar">
             <div class="d-flex align-items-center">
-                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                <button class="btn btn-link d-md-none me-3" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h5 class="mb-0 ms-3">Subir Ticket</h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Subir Ticket</li>
+                    </ol>
+                </nav>
             </div>
 
             <div class="user-menu">
                 <div class="dropdown">
-                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-3" data-bs-toggle="dropdown">
+                        <div class="text-end d-none d-md-block">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Bienvenido</small>
+                            <strong sec:authentication="name" style="font-size: 0.9rem;">Usuario</strong>
+                        </div>
                         <div class="user-avatar">
                             <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                         </div>
-                        <div class="text-start d-none d-md-block">
-                            <small class="text-muted d-block">Bienvenido</small>
-                            <strong sec:authentication="name">Usuario</strong>
-                        </div>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </button>
                             </form>
                         </li>
@@ -390,20 +788,12 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-custom">
-                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Subir Ticket</li>
-                </ol>
-            </nav>
-
             <!-- Page Header -->
             <div class="page-header">
                 <h1 class="page-title">
                     <i class="fas fa-upload"></i> Subir Ticket de Compra
                 </h1>
-                <p class="text-muted">Sube la imagen de tu ticket y registra los productos comprados</p>
+                <p class="page-subtitle">Sube la imagen de tu ticket y deja que la IA categorice automáticamente tus productos</p>
             </div>
 
             <!-- Alert Messages -->
@@ -423,10 +813,10 @@
                         <div class="form-card">
                             <h4><i class="fas fa-image"></i> Imagen del Ticket</h4>
                             
-                            <div class="image-upload-area" id="imageUploadArea" style="cursor: pointer;" role="button" tabindex="0" aria-label="Área para subir imagen del ticket">
-                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <div class="image-upload-area" id="imageUploadArea" role="button" tabindex="0" aria-label="Área para subir imagen del ticket">
+                                <i class="fas fa-cloud-upload-alt"></i>
                                 <h5>Arrastra tu imagen aquí</h5>
-                                <p class="text-muted">o haz clic para seleccionar</p>
+                                <p class="text-muted">o haz clic para seleccionar desde tu dispositivo</p>
                                 <input type="file" 
                                        class="d-none" 
                                        id="imagenTicket" 
@@ -434,13 +824,13 @@
                                        accept="image/jpeg,image/png,image/gif,image/webp"
                                        required
                                        aria-label="Seleccionar archivo de imagen">
-                                <small class="text-muted">Formatos: JPG, PNG, GIF, WEBP (Máx. 10MB)</small>
+                                <small class="text-muted"><i class="fas fa-info-circle"></i> Formatos: JPG, PNG, GIF, WEBP (Máx. 10MB)</small>
                             </div>
                             
                             <div id="imagePreviewContainer" class="d-none">
                                 <img id="imagePreview" class="image-preview" alt="Vista previa de la imagen del ticket">
-                                <button type="button" class="btn btn-danger btn-sm mt-2" id="removeImage" aria-label="Cambiar imagen del ticket" title="Cambiar imagen">
-                                    <i class="fas fa-trash" aria-hidden="true"></i> Cambiar Imagen
+                                <button type="button" class="btn btn-danger btn-sm mt-3 w-100" id="removeImage">
+                                    <i class="fas fa-trash"></i> Cambiar Imagen
                                 </button>
                             </div>
 
@@ -473,11 +863,11 @@
                                 </label>
                                 <select class="form-select" id="metodoPago" th:field="*{metodoPago}">
                                     <option value="">-- Seleccionar --</option>
-                                    <option value="Efectivo">Efectivo</option>
-                                    <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-                                    <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-                                    <option value="Transferencia">Transferencia</option>
-                                    <option value="Otro">Otro</option>
+                                    <option value="Efectivo">💵 Efectivo</option>
+                                    <option value="Tarjeta de Crédito">💳 Tarjeta de Crédito</option>
+                                    <option value="Tarjeta de Débito">💳 Tarjeta de Débito</option>
+                                    <option value="Transferencia">🏦 Transferencia</option>
+                                    <option value="Otro">📱 Otro</option>
                                 </select>
                             </div>
 
@@ -489,13 +879,13 @@
                                           id="observaciones" 
                                           th:field="*{observaciones}"
                                           rows="3"
-                                          placeholder="Observaciones adicionales..."></textarea>
+                                          placeholder="Agrega notas adicionales sobre este ticket..."></textarea>
                             </div>
                         </div>
 
                         <!-- Total -->
                         <div class="total-display">
-                            <p class="mb-0">Total del Ticket</p>
+                            <p><i class="fas fa-calculator"></i> Total del Ticket</p>
                             <h3 id="totalDisplay">$0.00</h3>
                             <input type="hidden" id="total" th:field="*{total}">
                             <input type="hidden" id="subtotal" th:field="*{subtotal}">
@@ -507,8 +897,8 @@
                         <div class="form-card">
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h4 class="mb-0"><i class="fas fa-shopping-cart"></i> Productos Comprados</h4>
-                                <button type="button" class="btn btn-success btn-sm" id="agregarProducto" aria-label="Agregar nuevo producto" title="Agregar Producto">
-                                    <i class="fas fa-plus" aria-hidden="true"></i> Agregar Producto
+                                <button type="button" class="btn btn-success" id="agregarProducto">
+                                    <i class="fas fa-plus"></i> Agregar Producto
                                 </button>
                             </div>
 
@@ -517,18 +907,18 @@
                             </div>
 
                             <div class="alert alert-info mt-3">
-                                <i class="fas fa-lightbulb"></i>
-                                <strong>Tip:</strong> Agrega todos los productos que aparecen en tu ticket con sus cantidades y precios.
+                                <i class="fas fa-robot"></i>
+                                <strong>Clasificación Inteligente:</strong> El sistema sugerirá automáticamente la categoría más apropiada para cada producto basándose en análisis semántico.
                             </div>
                         </div>
 
                         <!-- Buttons -->
                         <div class="d-flex gap-3 justify-content-end">
-                            <a th:href="@{/dashboard}" class="btn btn-secondary" aria-label="Cancelar y volver al dashboard" title="Cancelar">
-                                <i class="fas fa-times" aria-hidden="true"></i> Cancelar
+                            <a th:href="@{/dashboard}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
                             </a>
-                            <button type="submit" class="btn btn-primary" id="submitBtn" aria-label="Guardar ticket de compra" title="Guardar Ticket">
-                                <i class="fas fa-save" aria-hidden="true"></i> Guardar Ticket
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save"></i> Guardar Ticket
                             </button>
                         </div>
                     </div>
@@ -556,13 +946,12 @@
                 placeholder: '-- Seleccionar Usuario --'
             });
 
-            // Image Upload - Versión simple y directa
+            // Image Upload
             const imageUploadArea = $('#imageUploadArea');
             const imageInput = $('#imagenTicket');
             const imagePreview = $('#imagePreview');
             const imagePreviewContainer = $('#imagePreviewContainer');
 
-            // Click simple en el área de upload
             imageUploadArea.on('click', function() {
                 imageInput[0].click();
             });
@@ -570,6 +959,10 @@
             imageInput.on('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                        alert('El archivo es demasiado grande. Máximo 10MB.');
+                        return;
+                    }
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         imagePreview.attr('src', e.target.result);
@@ -617,22 +1010,26 @@
             function agregarProductoRow() {
                 const html = `
                     <div class="producto-row" data-index="${productoIndex}">
-                        <button type="button" class="btn btn-danger btn-sm remove-btn" onclick="removerProducto(${productoIndex})" aria-label="Eliminar producto" title="Eliminar producto">
-                            <i class="fas fa-times" aria-hidden="true"></i>
+                        <button type="button" class="btn btn-danger btn-sm remove-btn" onclick="removerProducto(${productoIndex})">
+                            <i class="fas fa-times"></i>
                         </button>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="nombreProducto_${productoIndex}">Nombre del Producto *</label>
+                                <label class="form-label" for="nombreProducto_${productoIndex}">
+                                    <i class="fas fa-box"></i> Nombre del Producto *
+                                </label>
                                 <input type="text" 
                                        class="form-control" 
                                        id="nombreProducto_${productoIndex}"
                                        name="productos[${productoIndex}].nombreProducto"
-                                       placeholder="Ej: Agua Bonafont"
+                                       placeholder="Ej: Agua Bonafont 1L"
                                        required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label" for="marca_${productoIndex}">Marca</label>
+                                <label class="form-label" for="marca_${productoIndex}">
+                                    <i class="fas fa-tag"></i> Marca
+                                </label>
                                 <input type="text" 
                                        class="form-control" 
                                        id="marca_${productoIndex}"
@@ -640,7 +1037,9 @@
                                        placeholder="Ej: Bonafont">
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label" for="cantidad_${productoIndex}">Cantidad *</label>
+                                <label class="form-label" for="cantidad_${productoIndex}">
+                                    <i class="fas fa-hashtag"></i> Cantidad *
+                                </label>
                                 <input type="number" 
                                        class="form-control cantidad-input" 
                                        id="cantidad_${productoIndex}"
@@ -650,7 +1049,9 @@
                                        required>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label" for="precioUnitario_${productoIndex}">Precio Unitario *</label>
+                                <label class="form-label" for="precioUnitario_${productoIndex}">
+                                    <i class="fas fa-dollar-sign"></i> Precio Unitario *
+                                </label>
                                 <input type="number" 
                                        class="form-control precio-input" 
                                        id="precioUnitario_${productoIndex}"
@@ -661,7 +1062,9 @@
                                        required>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label class="form-label" for="descuento_${productoIndex}">Descuento</label>
+                                <label class="form-label" for="descuento_${productoIndex}">
+                                    <i class="fas fa-percent"></i> Descuento
+                                </label>
                                 <input type="number" 
                                        class="form-control descuento-input" 
                                        id="descuento_${productoIndex}"
@@ -677,7 +1080,7 @@
                                 </label>
                                 <div class="categoria-sugerida-container" id="categoriaSugerida_${productoIndex}">
                                     <div class="alert alert-secondary mb-0" style="font-size: 0.9rem;">
-                                        <i class="fas fa-search"></i> Escribe el nombre del producto para obtener sugerencia automática...
+                                        <i class="fas fa-lightbulb"></i> Escribe el nombre del producto para obtener una sugerencia automática de categoría...
                                     </div>
                                 </div>
                                 <input type="hidden"
@@ -685,8 +1088,9 @@
                                        name="productos[${productoIndex}].categoriaId">
                             </div>
                             <div class="col-12">
-                                <div class="alert alert-light mb-0">
-                                    <strong>Subtotal:</strong> $<span class="subtotal-display">0.00</span>
+                                <div class="alert alert-light mb-0 d-flex justify-content-between align-items-center">
+                                    <strong><i class="fas fa-calculator"></i> Subtotal:</strong>
+                                    <span class="fs-5 fw-bold text-primary">$<span class="subtotal-display">0.00</span></span>
                                 </div>
                             </div>
                         </div>
@@ -701,8 +1105,10 @@
 
             // Remover Producto
             window.removerProducto = function(index) {
-                $(`.producto-row[data-index="${index}"]`).remove();
-                calcularTotal();
+                $(`.producto-row[data-index="${index}"]`).fadeOut(300, function() {
+                    $(this).remove();
+                    calcularTotal();
+                });
             };
 
             // Buscar categoría con IA cuando se escribe el nombre del producto
@@ -712,13 +1118,12 @@
                 const nombreProducto = input.val().trim();
                 const index = input.closest('.producto-row').data('index');
 
-                // Limpiar timeout anterior
                 clearTimeout(searchTimeout);
 
                 if (nombreProducto.length < 3) {
                     $(`#categoriaSugerida_${index}`).html(`
                         <div class="alert alert-secondary mb-0" style="font-size: 0.9rem;">
-                            <i class="fas fa-search"></i> Escribe al menos 3 caracteres para buscar...
+                            <i class="fas fa-lightbulb"></i> Escribe al menos 3 caracteres para buscar categoría...
                         </div>
                     `);
                     return;
@@ -727,14 +1132,14 @@
                 // Mostrar loading
                 $(`#categoriaSugerida_${index}`).html(`
                     <div class="alert alert-info mb-0" style="font-size: 0.9rem;">
-                        <i class="fas fa-spinner fa-spin"></i> Buscando categoría sugerida...
+                        <i class="fas fa-spinner fa-spin"></i> Analizando producto con IA...
                     </div>
                 `);
 
-                // Esperar 500ms antes de hacer la búsqueda (debounce)
+                // Debounce: esperar 600ms antes de hacer la búsqueda
                 searchTimeout = setTimeout(() => {
                     buscarCategoriaSugerida(nombreProducto, index);
-                }, 500);
+                }, 600);
             });
 
             // Función para buscar categoría en la API de Python
@@ -742,44 +1147,54 @@
                 $.ajax({
                     url: `http://localhost:5000/api/predict-category?q=${encodeURIComponent(nombreProducto)}`,
                     method: 'GET',
-                    timeout: 5000,
+                    timeout: 8000,
                     success: function(data) {
                         if (data.prediccion && data.prediccion.categoria_nombre) {
                             const categoria = data.prediccion;
-                            const confianza = categoria.score > 0
-                                ? Math.round((categoria.score / Math.max(...data.todas_categorias.map(c => c.score)) * 100))
+                            const todasCategorias = data.todas_categorias || [];
+                            const maxScore = Math.max(...todasCategorias.map(c => c.score || 0));
+                            const confianza = maxScore > 0 
+                                ? Math.round((categoria.score / maxScore) * 100)
                                 : 0;
 
-                            const esAproximada = confianza === 0;
+                            const esAproximada = confianza === 0 || confianza < 30;
 
-                            // Mostrar categoría sugerida
-                            $(`#categoriaSugerida_${index}`).html(`
+                            // HTML mejorado para la categoría sugerida
+                            const html = `
                                 <div class="alert alert-success mb-0" style="font-size: 0.9rem;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="fas fa-${esAproximada ? 'lightbulb' : 'check-circle'}"></i>
-                                            <strong>${categoria.categoria_nombre}</strong>
-                                            ${esAproximada
-                                                ? '<span class="badge bg-secondary ms-2">Sugerencia</span>'
-                                                : `<span class="badge bg-success ms-2">${confianza}% confianza</span>`
-                                            }
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <i class="fas fa-${esAproximada ? 'lightbulb' : 'check-circle'} ${esAproximada ? 'text-warning' : 'text-success'}"></i>
+                                                <strong class="text-dark">${categoria.categoria_nombre}</strong>
+                                                ${esAproximada
+                                                    ? '<span class="badge bg-warning text-dark">Sugerencia</span>'
+                                                    : `<span class="badge bg-success">${confianza}% precisión</span>`
+                                                }
+                                            </div>
+                                            <small class="text-muted d-block">
+                                                ${esAproximada
+                                                    ? '<i class="fas fa-info-circle"></i> Sugerencia basada en similitud semántica'
+                                                    : `<i class="fas fa-database"></i> ${categoria.count} productos similares en la base`
+                                                }
+                                            </small>
                                         </div>
                                     </div>
-                                    ${esAproximada
-                                        ? '<small class="text-muted d-block mt-1">No se encontró coincidencia exacta, esta es una sugerencia aproximada</small>'
-                                        : `<small class="text-muted d-block mt-1">${categoria.count} productos similares encontrados</small>`
-                                    }
                                 </div>
-                            `);
+                            `;
 
-                            // Guardar categoria_id en el campo hidden
+                            $(`#categoriaSugerida_${index}`).html(html);
                             $(`#categoriaId_${index}`).val(categoria.categoria_id);
                         } else {
-                            mostrarErrorCategoria(index, 'No se pudo determinar una categoría');
+                            mostrarErrorCategoria(index, 'No se encontró una categoría apropiada');
                         }
                     },
-                    error: function() {
-                        mostrarErrorCategoria(index, 'Error al conectar con el servicio de IA');
+                    error: function(xhr, status, error) {
+                        if (status === 'timeout') {
+                            mostrarErrorCategoria(index, 'Tiempo de espera agotado. Intenta de nuevo.');
+                        } else {
+                            mostrarErrorCategoria(index, 'Error al conectar con el servicio de IA');
+                        }
                     }
                 });
             }
@@ -833,22 +1248,73 @@
                 $('.sidebar').toggleClass('active');
             });
 
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function(e) {
+                const sidebar = $('.sidebar');
+                const toggle = $('#sidebarToggle');
+                
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && 
+                        !toggle.is(e.target) && toggle.has(e.target).length === 0) {
+                        sidebar.removeClass('active');
+                    }
+                }
+            });
+
             // Validación antes de enviar
             $('#ticketForm').on('submit', function(e) {
                 if (!imageInput[0].files || imageInput[0].files.length === 0) {
                     e.preventDefault();
-                    alert('Debe subir una imagen del ticket');
+                    alert('⚠️ Debe subir una imagen del ticket');
+                    imageUploadArea[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return false;
                 }
 
                 const productosCount = $('.producto-row').length;
                 if (productosCount === 0) {
                     e.preventDefault();
-                    alert('Debe agregar al menos un producto');
+                    alert('⚠️ Debe agregar al menos un producto');
                     return false;
                 }
 
-                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+                // Validar que todos los productos tengan nombre y precio
+                let productosValidos = true;
+                $('.producto-row').each(function() {
+                    const nombre = $(this).find('input[id^="nombreProducto_"]').val().trim();
+                    const precio = $(this).find('input[id^="precioUnitario_"]').val();
+                    
+                    if (!nombre || !precio || precio <= 0) {
+                        productosValidos = false;
+                        return false;
+                    }
+                });
+
+                if (!productosValidos) {
+                    e.preventDefault();
+                    alert('⚠️ Todos los productos deben tener nombre y precio válido');
+                    return false;
+                }
+
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando ticket...');
+            });
+
+            // Animations on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            $('.form-card').each(function() {
+                observer.observe(this);
             });
         });
     </script>

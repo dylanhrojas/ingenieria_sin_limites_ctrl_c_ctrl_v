@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva Categoría - Sistema de Viáticos</title>
+    <title>Nueva Categoría - Conector Semántico OneCard</title>
     
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
@@ -23,14 +23,22 @@
             --success-color: #10b981;
             --warning-color: #f59e0b;
             --danger-color: #ef4444;
+            --info-color: #3b82f6;
             --dark-color: #1e293b;
             --light-color: #f8fafc;
             --sidebar-width: 260px;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
 
         /* Sidebar */
@@ -45,24 +53,53 @@
             overflow-y: auto;
             transition: all 0.3s ease;
             z-index: 1000;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin: 0;
+            background: rgba(0,0,0,0.1);
         }
 
         .sidebar-header .logo {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .sidebar-header small {
+            opacity: 0.8;
+            font-size: 0.85rem;
         }
 
         .sidebar-menu {
@@ -72,22 +109,52 @@
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: rgba(255,255,255,0.8);
             text-decoration: none;
             transition: all 0.3s ease;
+            position: relative;
+            margin: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 70%;
+            background: white;
+            border-radius: 0 5px 5px 0;
+            transition: width 0.3s ease;
         }
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
             color: white;
-            border-left: 4px solid white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active::before {
+            width: 4px;
         }
 
         .sidebar-menu a i {
             width: 30px;
             font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .sidebar-menu .menu-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 20px 20px 10px;
+            color: rgba(255,255,255,0.6);
         }
 
         .sidebar-footer {
@@ -96,23 +163,50 @@
             width: 100%;
             padding: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .sidebar-footer .btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-footer .btn:hover {
+            background: white;
+            color: var(--primary-color);
         }
 
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
-            padding: 0;
             min-height: 100vh;
+            background: var(--light-color);
         }
 
         /* Top Navbar */
         .top-navbar {
             background: white;
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
         }
 
         .user-menu {
@@ -122,72 +216,176 @@
         }
 
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         /* Dashboard Content */
         .dashboard-content {
             padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .page-header {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .page-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .page-subtitle {
             color: #64748b;
+            font-size: 1rem;
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(118, 75, 162, 0.12));
+            border: 2px solid rgba(59, 130, 246, 0.25);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-banner-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .info-banner-content h5 {
+            color: var(--dark-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .info-banner-content p {
+            color: #475569;
+            margin: 0;
+            line-height: 1.6;
         }
 
         /* Form Card */
         .form-card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+            border: 1px solid rgba(0,0,0,0.04);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out 0.1s;
+            animation-fill-mode: both;
         }
 
-        .form-card h4 {
-            font-size: 1.3rem;
+        .form-card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .form-card-header h4 {
+            margin: 0;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-color);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-card-body {
+            padding: 35px;
         }
 
         .form-label {
             font-weight: 600;
             color: var(--dark-color);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
         }
 
         .form-control,
         .form-select {
-            border-radius: 10px;
+            border-radius: 12px;
             border: 2px solid #e2e8f0;
-            padding: 12px 15px;
+            padding: 14px 18px;
             transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
         .form-control:focus,
         .form-select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+            transform: translateY(-2px);
         }
 
         .form-control.is-invalid,
@@ -198,130 +396,188 @@
         .invalid-feedback {
             font-size: 0.875rem;
             margin-top: 5px;
+            font-weight: 500;
         }
 
-        .btn-primary {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-secondary {
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Info Box */
-        .info-box {
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
-            border-left: 4px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
-        .info-box i {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .info-box h5 {
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .info-box p {
-            margin: 0;
-            color: #475569;
-        }
-
-        /* Breadcrumb */
-        .breadcrumb-custom {
-            background: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-        .breadcrumb-custom .breadcrumb-item {
+        .form-text {
+            font-size: 0.85rem;
             color: #64748b;
-        }
-
-        .breadcrumb-custom .breadcrumb-item.active {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .breadcrumb-custom .breadcrumb-item a {
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .breadcrumb-custom .breadcrumb-item a:hover {
-            color: var(--primary-color);
-        }
-
-        /* Tag Input Style */
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            min-height: 50px;
-            cursor: text;
-        }
-
-        .tag {
-            background: var(--primary-color);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.875rem;
+            margin-top: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
-        .tag .remove-tag {
-            cursor: pointer;
-            font-weight: 700;
-            opacity: 0.8;
-        }
-
-        .tag .remove-tag:hover {
-            opacity: 1;
-        }
-
-        /* Helper Text */
-        .form-text {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 5px;
+        .form-text i {
+            color: var(--info-color);
         }
 
         /* Switch */
+        .form-check-input {
+            width: 3rem;
+            height: 1.5rem;
+            cursor: pointer;
+        }
+
         .form-check-input:checked {
-            background-color: var(--primary-color);
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.8));
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .example-box h6 {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .example-box h6 i {
+            color: var(--warning-color);
+            font-size: 1.2rem;
+        }
+
+        .example-item {
+            margin-bottom: 12px;
+        }
+
+        .example-item strong {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .example-item p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 3px 0 0 0;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            box-shadow: 0 2px 10px rgba(100, 116, 139, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(100, 116, 139, 0.3);
+        }
+
+        /* Alert Cards */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            padding: 18px 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.1));
+            color: #065f46;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.1));
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.1));
+            color: #1e40af;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.1));
+            color: #92400e;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert h6 {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        /* Bottom Alert Cards */
+        .bottom-alerts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Select2 Custom */
+        .select2-container--bootstrap-5 .select2-selection {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-height: 50px;
+            padding: 4px;
+        }
+
+        .select2-container--bootstrap-5.select2-container--focus .select2-selection {
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
         }
 
         /* Responsive */
@@ -342,8 +598,33 @@
                 padding: 20px;
             }
 
-            .form-card {
+            .form-card-header,
+            .form-card-body {
+                padding: 25px;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .info-banner {
+                flex-direction: column;
                 padding: 20px;
+            }
+
+            .info-banner-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bottom-alerts {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -353,16 +634,27 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <div class="logo">
-                <i class="fas fa-receipt"></i>
+                <i class="fas fa-credit-card"></i>
             </div>
-            <h3>Sistema de Viáticos</h3>
-            <small>OneCard</small>
+            <h3>Conector Semántico</h3>
+            <small>OneCard System</small>
         </div>
 
         <div class="sidebar-menu">
+            <div class="menu-label">Principal</div>
             <a th:href="@{/dashboard}">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
+            </a>
+            
+            <div class="menu-label">Gestión</div>
+            <a th:href="@{/tickets/subir}">
+                <i class="fas fa-upload"></i>
+                <span>Subir Ticket</span>
+            </a>
+            <a th:href="@{/tickets/lista}">
+                <i class="fas fa-receipt"></i>
+                <span>Lista de Tickets</span>
             </a>
             <a th:href="@{/productos}">
                 <i class="fas fa-box"></i>
@@ -372,11 +664,9 @@
                 <i class="fas fa-tags"></i>
                 <span>Categorías</span>
             </a>
-            <a href="#">
-                <i class="fas fa-receipt"></i>
-                <span>Viáticos</span>
-            </a>
-            <a href="#">
+            
+            <div class="menu-label">Sistema</div>
+            <a th:href="@{/usuarios}">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
             </a>
@@ -388,14 +678,10 @@
                 <i class="fas fa-cog"></i>
                 <span>Configuración</span>
             </a>
-        </div>
-
-        <div class="sidebar-footer">
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn btn-light w-100">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
+            <a th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                <span>Cerrar Sesión</span>
+            </a>
         </div>
     </div>
 
@@ -404,30 +690,37 @@
         <!-- Top Navbar -->
         <nav class="top-navbar">
             <div class="d-flex align-items-center">
-                <button class="btn btn-link d-md-none" id="sidebarToggle">
+                <button class="btn btn-link d-md-none me-3" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h5 class="mb-0 ms-3">Nueva Categoría</h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/categorias}">Categorías</a></li>
+                        <li class="breadcrumb-item active">Nueva Categoría</li>
+                    </ol>
+                </nav>
             </div>
 
             <div class="user-menu">
                 <div class="dropdown">
-                    <button class="btn btn-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                    <button class="btn btn-link d-flex align-items-center gap-3" data-bs-toggle="dropdown">
+                        <div class="text-end d-none d-md-block">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Bienvenido</small>
+                            <strong sec:authentication="name" style="font-size: 0.9rem;">Usuario</strong>
+                        </div>
                         <div class="user-avatar">
                             <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
                         </div>
-                        <div class="text-start d-none d-md-block">
-                            <small class="text-muted d-block">Bienvenido</small>
-                            <strong sec:authentication="name">Usuario</strong>
-                        </div>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post">
-                                <button type="submit" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
                                 </button>
                             </form>
                         </li>
@@ -438,212 +731,237 @@
 
         <!-- Dashboard Content -->
         <div class="dashboard-content">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb breadcrumb-custom">
-                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/categorias}">Categorías</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Nueva Categoría</li>
-                </ol>
-            </nav>
-
             <!-- Page Header -->
             <div class="page-header">
                 <h1 class="page-title">
                     <i class="fas fa-plus-circle"></i> Nueva Categoría
                 </h1>
-                <p class="page-subtitle">Registra una nueva categoría para clasificación de productos</p>
+                <p class="page-subtitle">Registra una nueva categoría para el sistema de clasificación inteligente</p>
             </div>
 
-            <!-- Info Box -->
-            <div class="info-box">
-                <div class="d-flex">
-                    <i class="fas fa-info-circle"></i>
-                    <div>
-                        <h5>Información sobre Categorías</h5>
-                        <p>
-                            Las categorías permiten organizar los productos y realizar clasificación automática de viáticos. 
-                            Puedes crear categorías principales y subcategorías jerárquicas. Las palabras clave ayudarán 
-                            al sistema de clasificación semántica a identificar productos de forma automática.
-                        </p>
-                    </div>
+            <!-- Info Banner -->
+            <div class="info-banner">
+                <div class="info-banner-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="info-banner-content">
+                    <h5>Sistema de Clasificación Semántica</h5>
+                    <p>
+                        Las categorías organizan los productos jerárquicamente y permiten la clasificación automática mediante IA. 
+                        Las palabras clave que definas se utilizarán para identificar y categorizar productos de forma inteligente, 
+                        ahorrando tiempo en el registro de tickets y mejorando la precisión del análisis de gastos.
+                    </p>
                 </div>
             </div>
 
             <!-- Form Card -->
             <div class="form-card">
-                <h4><i class="fas fa-edit"></i> Información de la Categoría</h4>
-
-                <!-- Alert Messages -->
-                <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle"></i>
-                    <span th:text="${mensaje}"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="form-card-header">
+                    <h4>
+                        <i class="fas fa-edit"></i>
+                        Información de la Categoría
+                    </h4>
                 </div>
 
-                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span th:text="${error}"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <div class="form-card-body">
+                    <!-- Alert Messages -->
+                    <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle"></i>
+                        <span th:text="${mensaje}">Mensaje</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
 
-                <!-- Form -->
-                <form th:action="@{/categorias/guardar}" th:object="${categoria}" method="post">
-                    <div class="row">
-                        <!-- Nombre -->
-                        <div class="col-md-6 mb-4">
-                            <label for="nombre" class="form-label">
-                                <i class="fas fa-tag"></i> Nombre de la Categoría *
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="nombre" 
-                                   th:field="*{nombre}"
-                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
-                                   placeholder="Ej: Alimentos y Bebidas"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
-                                Error en nombre
-                            </div>
-                            <small class="form-text">Nombre único e identificativo de la categoría</small>
-                        </div>
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:text="${error}">Error</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
 
-                        <!-- Categoría Padre -->
-                        <div class="col-md-6 mb-4">
-                            <label for="categoriaPadreId" class="form-label">
-                                <i class="fas fa-folder-tree"></i> Categoría Padre (Opcional)
-                            </label>
-                            <select class="form-select" 
-                                    id="categoriaPadreId" 
-                                    th:field="*{categoriaPadreId}">
-                                <option value="">-- Sin categoría padre (Raíz) --</option>
-                                <option th:each="cat : ${categorias}" 
-                                        th:value="${cat.id}" 
-                                        th:text="${cat.nombre}">
-                                    Categoría
-                                </option>
-                            </select>
-                            <small class="form-text">Selecciona una categoría padre para crear una subcategoría</small>
-                        </div>
-
-                        <!-- Nivel -->
-                        <div class="col-md-6 mb-4">
-                            <label for="nivel" class="form-label">
-                                <i class="fas fa-layer-group"></i> Nivel *
-                            </label>
-                            <input type="number" 
-                                   class="form-control" 
-                                   id="nivel" 
-                                   th:field="*{nivel}"
-                                   min="1" 
-                                   max="5"
-                                   value="1"
-                                   required>
-                            <small class="form-text">Nivel jerárquico (1 = raíz, 2-5 = subcategorías)</small>
-                        </div>
-
-                        <!-- Estado Activa -->
-                        <div class="col-md-6 mb-4">
-                            <label class="form-label">
-                                <i class="fas fa-toggle-on"></i> Estado
-                            </label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" 
-                                       type="checkbox" 
-                                       id="activa" 
-                                       th:field="*{activa}"
-                                       checked>
-                                <label class="form-check-label" for="activa">
-                                    Categoría activa
+                    <!-- Form -->
+                    <form th:action="@{/categorias/guardar}" th:object="${categoria}" method="post" id="categoriaForm">
+                        <div class="row">
+                            <!-- Nombre -->
+                            <div class="col-md-6 mb-4">
+                                <label for="nombre" class="form-label">
+                                    <i class="fas fa-tag"></i> Nombre de la Categoría *
                                 </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombre" 
+                                       th:field="*{nombre}"
+                                       th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''"
+                                       placeholder="Ej: Alimentos y Bebidas"
+                                       required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+                                    Error en nombre
+                                </div>
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Nombre único e identificativo de la categoría
+                                </small>
                             </div>
-                            <small class="form-text">Solo las categorías activas se usarán para clasificación</small>
-                        </div>
 
-                        <!-- Descripción -->
-                        <div class="col-12 mb-4">
-                            <label for="descripcion" class="form-label">
-                                <i class="fas fa-align-left"></i> Descripción
-                            </label>
-                            <textarea class="form-control" 
-                                      id="descripcion" 
-                                      th:field="*{descripcion}"
-                                      rows="4"
-                                      placeholder="Descripción detallada de la categoría y su propósito..."></textarea>
-                            <small class="form-text">Descripción opcional para documentar el propósito de la categoría</small>
-                        </div>
+                            <!-- Categoría Padre -->
+                            <div class="col-md-6 mb-4">
+                                <label for="categoriaPadreId" class="form-label">
+                                    <i class="fas fa-folder-tree"></i> Categoría Padre (Opcional)
+                                </label>
+                                <select class="form-select" 
+                                        id="categoriaPadreId" 
+                                        th:field="*{categoriaPadreId}">
+                                    <option value="">-- Sin categoría padre (Raíz) --</option>
+                                    <option th:each="cat : ${categorias}" 
+                                            th:value="${cat.id}" 
+                                            th:text="${cat.nombre}">
+                                        Categoría
+                                    </option>
+                                </select>
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Selecciona una categoría padre para crear una subcategoría
+                                </small>
+                            </div>
 
-                        <!-- Palabras Clave -->
-                        <div class="col-12 mb-4">
-                            <label for="palabrasClave" class="form-label">
-                                <i class="fas fa-key"></i> Palabras Clave para Clasificación *
-                            </label>
-                            <textarea class="form-control" 
-                                      id="palabrasClave" 
-                                      th:field="*{palabrasClave}"
-                                      rows="5"
-                                      placeholder="comida, alimento, desayuno, almuerzo, cena, restaurante, food, eat..."
-                                      required></textarea>
-                            <small class="form-text">
-                                <strong>Importante:</strong> Separa las palabras clave con comas. 
-                                Incluye sinónimos, variaciones y términos relacionados. 
-                                Estas palabras se usarán para la clasificación automática de productos.
-                            </small>
-                        </div>
+                            <!-- Nivel -->
+                            <div class="col-md-6 mb-4">
+                                <label for="nivel" class="form-label">
+                                    <i class="fas fa-layer-group"></i> Nivel Jerárquico *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="nivel" 
+                                       th:field="*{nivel}"
+                                       min="1" 
+                                       max="5"
+                                       value="1"
+                                       required>
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Nivel 1 = raíz, 2-5 = subcategorías (máximo 5 niveles)
+                                </small>
+                            </div>
 
-                        <!-- Ejemplo de Palabras Clave -->
-                        <div class="col-12 mb-4">
-                            <div class="alert alert-light border">
-                                <h6 class="mb-3"><i class="fas fa-lightbulb"></i> Ejemplos de Palabras Clave:</h6>
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <strong>Alimentos:</strong>
-                                        <p class="small mb-0 text-muted">comida, alimento, comestible, food, eat, desayuno, lunch, cena</p>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <strong>Bebidas:</strong>
-                                        <p class="small mb-0 text-muted">bebida, drink, agua, refresco, jugo, café, té, water, soda</p>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <strong>Transporte:</strong>
-                                        <p class="small mb-0 text-muted">transporte, taxi, uber, bus, avión, flight, viaje, gasolina, combustible</p>
+                            <!-- Estado Activa -->
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-toggle-on"></i> Estado de la Categoría
+                                </label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           id="activa" 
+                                           th:field="*{activa}"
+                                           checked>
+                                    <label class="form-check-label" for="activa">
+                                        <i class="fas fa-check-circle text-success"></i> Categoría activa
+                                    </label>
+                                </div>
+                                <small class="form-text d-block">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Solo las categorías activas se usarán para clasificación automática
+                                </small>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="col-12 mb-4">
+                                <label for="descripcion" class="form-label">
+                                    <i class="fas fa-align-left"></i> Descripción (Opcional)
+                                </label>
+                                <textarea class="form-control" 
+                                          id="descripcion" 
+                                          th:field="*{descripcion}"
+                                          rows="4"
+                                          placeholder="Descripción detallada del propósito y alcance de esta categoría..."></textarea>
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Descripción opcional para documentar el uso de la categoría
+                                </small>
+                            </div>
+
+                            <!-- Palabras Clave -->
+                            <div class="col-12 mb-4">
+                                <label for="palabrasClave" class="form-label">
+                                    <i class="fas fa-key"></i> Palabras Clave para Clasificación IA *
+                                </label>
+                                <textarea class="form-control" 
+                                          id="palabrasClave" 
+                                          th:field="*{palabrasClave}"
+                                          rows="5"
+                                          placeholder="comida, alimento, food, desayuno, almuerzo, cena, restaurante, eat, meal, breakfast, lunch, dinner..."
+                                          required></textarea>
+                                <small class="form-text">
+                                    <i class="fas fa-robot"></i> 
+                                    <strong>Importante:</strong> Separa las palabras clave con comas. 
+                                    Incluye sinónimos, variaciones en español e inglés, y términos relacionados. 
+                                    Estas palabras entrenan el sistema de clasificación semántica con IA.
+                                </small>
+                            </div>
+
+                            <!-- Ejemplo de Palabras Clave -->
+                            <div class="col-12 mb-4">
+                                <div class="example-box">
+                                    <h6>
+                                        <i class="fas fa-lightbulb"></i>
+                                        Ejemplos de Palabras Clave por Categoría
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-utensils"></i> Alimentos:</strong>
+                                            <p>comida, alimento, food, desayuno, almuerzo, cena, comestible, meal, eat, breakfast, lunch, dinner</p>
+                                        </div>
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-coffee"></i> Bebidas:</strong>
+                                            <p>bebida, drink, agua, water, refresco, jugo, café, té, soda, juice, coffee, tea, beverage</p>
+                                        </div>
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-car"></i> Transporte:</strong>
+                                            <p>transporte, taxi, uber, bus, avión, flight, viaje, gasolina, combustible, transport, travel, fuel</p>
+                                        </div>
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-hotel"></i> Hospedaje:</strong>
+                                            <p>hotel, hospedaje, alojamiento, lodging, accommodation, hostel, posada, estancia, stay, room</p>
+                                        </div>
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-file-alt"></i> Papelería:</strong>
+                                            <p>papel, pluma, lápiz, cuaderno, office, supplies, pen, pencil, notebook, folder, papelería</p>
+                                        </div>
+                                        <div class="col-md-4 example-item">
+                                            <strong><i class="fas fa-laptop"></i> Tecnología:</strong>
+                                            <p>computadora, laptop, mouse, teclado, tech, technology, computer, keyboard, software, hardware</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Buttons -->
-                    <div class="d-flex gap-3 justify-content-end pt-3 border-top">
-                        <a th:href="@{/categorias}" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar Categoría
-                        </button>
-                    </div>
-                </form>
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3 justify-content-end pt-4 border-top">
+                            <a th:href="@{/categorias}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save"></i> Guardar Categoría
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <!-- Additional Info -->
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-brain"></i> Clasificación Inteligente</h6>
-                        <p class="mb-0 small">
-                            El sistema utiliza las palabras clave para realizar clasificación semántica automática 
-                            de productos en tickets de viáticos.
-                        </p>
-                    </div>
+            <!-- Bottom Alert Cards -->
+            <div class="bottom-alerts">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-brain"></i> Clasificación Inteligente</h6>
+                    <p class="mb-0">
+                        El sistema utiliza análisis semántico con IA para clasificar automáticamente productos 
+                        basándose en las palabras clave que definas.
+                    </p>
                 </div>
-                <div class="col-md-6">
-                    <div class="alert alert-warning">
-                        <h6><i class="fas fa-exclamation-triangle"></i> Nota Importante</h6>
-                        <p class="mb-0 small">
-                            Una vez creada la categoría, puedes editarla en cualquier momento. 
-                            Las categorías inactivas no se usarán para clasificación.
-                        </p>
-                    </div>
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Importante</h6>
+                    <p class="mb-0">
+                        Puedes editar las categorías en cualquier momento. Las categorías inactivas no se usarán 
+                        para clasificación automática pero se conservarán en el sistema.
+                    </p>
                 </div>
             </div>
         </div>
@@ -659,13 +977,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        // Sidebar Toggle for Mobile
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-
-        // Initialize Select2
         $(document).ready(function() {
+            // Initialize Select2
             $('#categoriaPadreId').select2({
                 theme: 'bootstrap-5',
                 placeholder: '-- Sin categoría padre (Raíz) --',
@@ -683,22 +996,61 @@
                     $('#nivel').val(1);
                 }
             });
-        });
 
-        // Validation helper
-        (function () {
-            'use strict'
-            const forms = document.querySelectorAll('form')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
+            // Sidebar Toggle
+            $('#sidebarToggle').on('click', function() {
+                $('.sidebar').toggleClass('active');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            $(document).on('click', function(e) {
+                const sidebar = $('.sidebar');
+                const toggle = $('#sidebarToggle');
+                
+                if (window.innerWidth <= 768) {
+                    if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0 && 
+                        !toggle.is(e.target) && toggle.has(e.target).length === 0) {
+                        sidebar.removeClass('active');
                     }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })();
+                }
+            });
+
+            // Form validation
+            $('#categoriaForm').on('submit', function(e) {
+                const nombre = $('#nombre').val().trim();
+                const palabrasClave = $('#palabrasClave').val().trim();
+                const nivel = parseInt($('#nivel').val());
+
+                if (!nombre) {
+                    e.preventDefault();
+                    alert('⚠️ Debes ingresar un nombre para la categoría');
+                    $('#nombre').focus();
+                    return false;
+                }
+
+                if (!palabrasClave) {
+                    e.preventDefault();
+                    alert('⚠️ Debes ingresar palabras clave para la clasificación');
+                    $('#palabrasClave').focus();
+                    return false;
+                }
+
+                if (nivel < 1 || nivel > 5) {
+                    e.preventDefault();
+                    alert('⚠️ El nivel debe estar entre 1 y 5');
+                    $('#nivel').focus();
+                    return false;
+                }
+
+                // Disable submit button
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
     </script>
 </body>
 </html>
